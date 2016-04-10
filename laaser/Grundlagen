@@ -1,0 +1,59 @@
+
+#Grundlagen  
+
+- **Erklären Sie die fünf wesentlichen Elemente des frühen Web, die immer noch die Kernelemente des modernen Web sind!**  
+URL zum identifizieren von Resourcen.  
+HTTP Protocol zum erklären wie Anfragen und Antworten funktionieren.  
+Software Program dass auf HTTP Anfragen antworten kann.  
+HTML zum veröffentlichen von Dokumenten.  
+Browser zum Anzeigen des oben genannten.
+
+
+- **Beschreiben Sie Vor- und Nachteile von Browser-basierten Anwendungen im Vergleich zu installierten Anwedungen!**  
+Vorteile Browser-basierte Anwendungen:  
+Erreichbar durchs Internet.  
+Kann auf verschiedenen Platformen (Betriebssystemen, Browsern) benutzt werden.  
+Updates sind einfacher.  
+Zentrale Speicherorte (Sicherer).   
+Nachteile Browser-basierte Anwendungen:  
+Internet Verbindung als Vorraussetzung.  
+Keine sichere Verbindung übers Internet garantierbar.  
+
+
+- **Was versteht man unter dem Begriff Request for Comments (RFC)?**  
+Technische und Organisatorische Dokumente.
+
+- **Was versteht man unter dem Client/Server Paradigma der Interaktion? Wie ist es vom peer-to-peer Paradigma abzugrenzen?**  
+Es gibt zwei Verschiedene Akteure den Server und den Client. Der Server ist ständig da und beantwortet Anfragen des Clients in Form von Daten. Diese Anfragen und Antworten verlaufen Kreisförmig.  
+Das peer-to-peer Paradigma sieht jeden Computer als gleichwertig sprich jeder Computer kann Anfragen und Antworten (ist sozuagen Client und Server).
+
+- **Beschreiben Sie Aufbau und Rolle des Uniform Ressource Locator!**  
+Identifiziert und lokalisiert Resourcen wie zum Beispiel Webseiten. Es besteht aus einem Schema das bestimmten Teilen eine bestimmte Reihenfolge und Funktionzuweist.
+
+- **Was versteht man unter dem Begriff Ressource?**  
+Eine Ressource ist zum Beispiel eine Webseite sprich ein Teil des Webs.
+
+- **Was versteht man unter URL, URN, URI?**  
+Uniform Resource Locators oder kurz URL beschreibt den Namensgebung Mechanismus.
+
+- **Was ist die Rolle und sind die Vorteile des Domain Name System?**  
+Durch das DNS muss man sich keine langen Zahlenketten merken.
+
+- **Beschreiben Sie die wesentlichen Schritte des domain name address resolution process!**  
+Jemand möchte auf eine bestimmte Website. Falls IP nicht im Browser Cache ist wird die Anfrage an den DNS Auflöser weitergegeben. Falls die IP nicht im DNS Cache ist geht der request witer an den ISP DNS Server. Dort wird erneut das Cache gecheckt. Falls sie dort nicht ist geht die Anfrage an den root name server. Der root name Server gibt un die IP aus. Und es geht rückwärts bis hin zum Anfang.
+
+- **Wie viele request Operationen werden zum Anzeigen einer einzelnen Web Seite ausgeführt?**  
+Kommt drauf an ob es in einem Cache gespeichert ist sonst bis zu 5.
+
+- **Erklären Sie den Unterschied zwischen statischen und dynamischen Web Seiten!**  
+Statische Websites basieren meist auf HTML und sehen für alle User immer gleich aus.  
+Dynamische Webseiten basieren auf Servern und lesen von dort Inhalte aus einer Datenbank ab, die dann zum User geschickt werden. Die Seite wird sozusagen frisch geladen und der Inhalt kann sich unterscheiden.
+
+- **Erklären sie die Begriffe Anwendungslogik und Präsentationslogik!**  
+Anwendungslogik Verarbeitet Sachen und Kontrolliert. Präsentationslogik ist die Durchführung der Benutzerschnittstelle.
+
+- **Erklären Sie das Konzept der HTTP Status Codes!**  
+Ist die Antwort von einem Server auf eine HTTP Anfrage. 
+
+- **Was versteht man unter einem Servlet?**
+Java Klassen die auf einem Webserver Anfragen entgegenehmen udn beantworten.
