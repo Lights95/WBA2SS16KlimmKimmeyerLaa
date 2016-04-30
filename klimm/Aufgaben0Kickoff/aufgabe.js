@@ -1,7 +1,5 @@
 var fs = require('fs');
-
-/*Wo genau liegt der theoretische Unterschied in der Asynchronen und Synchronen Variante*/
-/*var wolkenkratzer = JSON.parse(fs.readFile('wolkenkratzer.json'));*/
+var chalk = require('chalk');
 
 fs.readFile('wolkenkratzer.json', function (err, data) {
    if (err) {
@@ -11,19 +9,9 @@ fs.readFile('wolkenkratzer.json', function (err, data) {
    var wolkenkratzerAnzahl = wolkenkratzer.wolkenkratzer.length;
 
    for (var i= 0; i<wolkenkratzerAnzahl; i++) {
-     console.log("Name: " + wolkenkratzer.wolkenkratzer[i].name);
-     console.log("Stadt: " + wolkenkratzer.wolkenkratzer[i].stadt);
-     console.log("Hoehe: " + wolkenkratzer.wolkenkratzer[i].hoehe + "m");
+     console.log("Name: "  + chalk.red(wolkenkratzer.wolkenkratzer[i].name));
+     console.log("Stadt: " + chalk.blue(wolkenkratzer.wolkenkratzer[i].stadt));
+     console.log("Hoehe: " + chalk.green(wolkenkratzer.wolkenkratzer[i].hoehe + "m"));
      console.log("--------------------");
    }
 });
-/*wolkenkratzer = JSON.parse(wolkenkratzer);
-
-var wolkenkratzerAnzahl = wolkenkratzer.wolkenkratzer.length;
-
-for (var i= 0; i<wolkenkratzerAnzahl; i++) {
-  console.log("Name: " + wolkenkratzer.wolkenkratzer[i].name);
-  console.log("Stadt: " + wolkenkratzer.wolkenkratzer[i].stadt);
-  console.log("Hoehe: " + wolkenkratzer.wolkenkratzer[i].hoehe + "m");
-  console.log("--------------------");
-}*/

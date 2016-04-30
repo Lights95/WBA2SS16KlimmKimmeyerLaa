@@ -1,0 +1,15 @@
+{
+  "name": "w0aufgaben",
+  "version": "1.0.0",
+  "description": "Aufgaben des 1. Arbeitsblattes",
+  "main": "aufgabe.js",
+  "dependencies": {
+    "chalk": "^1.1.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marvin Klimm",
+  "license": "ISC"
+}
