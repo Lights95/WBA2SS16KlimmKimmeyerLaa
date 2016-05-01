@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Lights95/WBA2SS16KlimmKimmeyerLaa/issues"
   },
-  "homepage": "https://github.com/Lights95/WBA2SS16KlimmKimmeyerLaa#readme"
+  "homepage": "https://github.com/Lights95/WBA2SS16KlimmKimmeyerLaa#readme",
+  "dependencies": {
+    "chalk": "^1.1.3"
+  }
 }
