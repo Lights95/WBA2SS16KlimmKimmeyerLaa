@@ -1,0 +1,19 @@
+{
+  "name": "workshop_a1_wba",
+  "version": "0.0.1",
+  "description": "Workshop Aufgaben WBA 2",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lights95/WBA2SS16KlimmKimmeyerLaa.git"
+  },
+  "author": "jkimmeyer",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Lights95/WBA2SS16KlimmKimmeyerLaa/issues"
+  },
+  "homepage": "https://github.com/Lights95/WBA2SS16KlimmKimmeyerLaa#readme"
+}
