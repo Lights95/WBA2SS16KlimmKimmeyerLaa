@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Lights95/WBA2SS16KlimmKimmeyerLaa#readme",
   "dependencies": {
-    "chalk": "^1.1.3"
+    "chalk": "^1.1.3",
+    "express": "^4.13.4"
   }
 }
