@@ -1,4 +1,4 @@
-ie die fünf wesentlichen Elemente des frühen Web, die immer noch die Kernelemente des modernen Web sind!
+    1 Die die fünf wesentlichen Elemente des frühen Web, die immer noch die Kernelemente des modernen Web sind!
 	2	Beschreiben Sie Vor- und Nachteile von Browser-basierten Anwendungen im Vergleich zu installierten Anwedungen!
 	3	Was versteht man unter dem Begriff Request for Comments (RFC)?
 	4	Was versteht man unter dem Client/Server Paradigma der Interaktion? Wie ist es vom peer-to-peer Paradigma abzugrenzen?

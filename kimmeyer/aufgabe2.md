@@ -7,7 +7,7 @@
 5. Erklären Sie den Unterschied zwischen Wohlgeformtheit und Gültigkeit von XML Dokumenten!
 6. Was ist ein Element in einem XML Dokument?
 7. Erklären Sie das Konzept der namespaces!
-8. Erklären Sie den folgenden regulären Ausdruck recipe (title,date,ingredient*,preparation,comment?,  nutrition,related*)!
+8. Erklären Sie den folgenden regulären Ausdruck recipe (title,date,ingredient *,preparation,comment?,  nutrition,related*)!
 9. Entwerfen Sie eine XML Sprache für Fahranweisungen. Als Beispiel für Fahranweisungen mag driving.txt dienen. Auch wenn grob-granulare Lösungen möglich sind, sollte hier eine fein-granulare Lösung entwickelt werden, damit eine automatische Verarbeitung etwa durch einen "Navigationsasssistenten" möglich wäre. Konvertieren Sie driving.txt in die von Ihnen entwickekte XML Sprache!
 10. Entwerfen Sie eine Schemasprache für die in der vorigen Aufgabe entwickelte XML Sprache!
 11. Schreiben Sie ein gültiges Instanzdokument für das Schema movies.xsd, das jedes deklarierte Element mindestens einmal verwendet!
