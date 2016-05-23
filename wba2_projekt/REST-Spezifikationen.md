@@ -1,13 +1,13 @@
 |     Ressource     | Methode |                  Semantik                  | content-type (req) | content-type (res) |
 |:-----------------:|:-------:|:------------------------------------------:|:------------------:|:------------------:|
-| /user             | GET     | Liste, aller vorhandenen Benutzer          | text/plain         | application/json   |
-| /user/{:id}       | POST    | Erstellt neuen User mit ID                 | application/json   | application/json   |
-|                   | GET     | Gibt Benutzer mit ID aus                   | text/plain         | application/json   |
+| /users             | GET     | Liste, aller vorhandenen Benutzer          | text/plain         | application/json   |
+|       | POST    | Erstellt neuen User mit ID                 | application/json   | application/json   |
+|   /users/{:id}                 | GET     | Gibt Benutzer mit ID aus                   | text/plain         | application/json   |
 |                   | DELETE  | Löscht Benutzer mit bestimmter ID          | text/plain         | text/plain         |
 |                   | PUT     | Ändern eines Benutzers                     | application/json   | application/json   |
 | /songs            | GET     | Liste, aller Songs, Interpreten und Genres | text/plain         | application/json   |
-| /songs/{:id}      | GET     | Gibt Infos über die ID bestimmten Song an  | text/plain         | application/json   |
-|                   | POST    | Fügt neuen Song hinzu                      | application/json   | application/json   |
+|       | POST     | Fügt neuen Song hinzu   | text/plain         | application/json   |
+|   /songs/{:id}               |  GET   |    Gibt Infos über die ID bestimmten Song an                  | application/json   | application/json   |
 |                   | DELETE  | Löscht bestimmten Song                     | text/plain         | text/plain         |
 |                   | PUT     | Ändern eines Songs                         | application/json   | application/json   |
 | /genre            | GET     | Liste, aller Genres                        | text/plain         | application/json   |
