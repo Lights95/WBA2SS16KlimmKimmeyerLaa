@@ -6,12 +6,6 @@ var db = redis.createClient();
     
 var app = express();
 
-var user = [
-  {name: "Johannes", id : 0},
-  {name: "Marvin", id : 1},
-  {name: "Lena", id : 2}
-]
-
 /*API*/
 app.get('/', function(req, res){
   res.send('API für Songabstimmung');
@@ -24,7 +18,7 @@ app.post('/users', jsonParser, function(req, res){
     db.keys('user:*', function(err, keys){
         /*Gibt alle User aus der DB zurück*/
         db.mget(keys, function(err, users){
-            /*Überprüft ob Variable einen Wert hat*/
+            /*Überprüft, ob Variable einen Wert hat*/
             if(users===undefined){
                 users =[];
             }
@@ -36,7 +30,9 @@ app.post('/users', jsonParser, function(req, res){
             
             /*Überprüft, ob der neue Nutzername vorhanden ist*/
             users.forEach(function(user){
-                if(user.name === req.body.name) gesetzt=true;
+                if(user.name === req.body.name) {
+                    gesetzt=true;
+                }
             });
             
             
@@ -44,12 +40,13 @@ app.post('/users', jsonParser, function(req, res){
                 return res.status(401).json({message : "Username bereits vergeben."})
             }
             /*Erstellt neuen User in der Datenbank*/
-            db.incr('id:users', function(err, id){
-                var newUser = req.body();
-                newUser.id= id;
-                db.set('user:' + user.id, JSON.stringify(newUser), function(err, newUser){
+            db.incr('userIDs', function(err, id){
+                var user = req.body;
+                user.groups=[];
+                user.id= id;
+                db.set('user:' + user.id, JSON.stringify(user), function(err, newUser){
                     /*neuer User wird als normaler Text zurückgegeben*/ 
-                    res.type('plain').json(newUser);
+                    res.status(201).json(user);
                 });
             });
         });
@@ -59,25 +56,30 @@ app.post('/users', jsonParser, function(req, res){
 /*User ausgeben*/
 app.get('/users', function(req, res){
   db.keys('user:*', function(err, keys){
-     db.mget(key,function(err, users){
-        res.type('json').send 
-     }); 
+      db.mget(keys, function(err, users){
+          users=users.map(function(user){
+              return JSON.parse(user);
+          });
+          res.json(users);
+      });
   });
 });
 
+
+
 /*Bestimmten User ausgeben*/
-app.get('/users/:id', function(req, res){
+app.get('/users/:name', function(req, res){
    db.get('user;'+req.params.id, function(err,rep){
        if(rep){
            res.type('json').send(rep);
        }
        else{
-           res.status(404).type('plain').send('Der User mit der ID' + req.params.id +'ist nicht vorhanden.');
+           res.status(404).type('plain').send('Der User mit der ' + req.params.id +' ist nicht vorhanden.');
        }
    });
 });
 
-/*User löschen*/
+/*User löschen
 app.delete('/users/:id', function(req, res){
   var userID = req.params.id;
 
@@ -87,6 +89,7 @@ app.delete('/users/:id', function(req, res){
   }
   else res.status(404).end();
 });
+*/
 
 /*Songs*/
 
