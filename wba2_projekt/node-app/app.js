@@ -43,7 +43,7 @@ app.post('/users', jsonParser, function(req, res){
             db.incr('userIDs', function(err, id){
                 var user = req.body;
                 user.groups=[];
-                user.id= id;
+                user.id=id;
                 db.set('user:' + user.id, JSON.stringify(user), function(err, newUser){
                     /*neuer User wird als normaler Text zurückgegeben*/ 
                     res.status(201).json(user);
@@ -55,41 +55,48 @@ app.post('/users', jsonParser, function(req, res){
 
 /*User ausgeben*/
 app.get('/users', function(req, res){
-  db.keys('user:*', function(err, keys){
-      db.mget(keys, function(err, users){
-          users=users.map(function(user){
-              return JSON.parse(user);
-          });
-          res.json(users);
-      });
-  });
+    db.exists('user:', function(err,rep){
+    if(!rep)res.status(404).type('plain').send('Es ist keine Datenbank vorhanden.');
+    else{
+        db.keys('user:*', function(err, keys){
+            db.mget(keys, function(err, users){
+                users=users.map(function(user){
+                    return JSON.parse(user);
+                });
+                res.json(users);
+            });
+        });
+    }
+    });   
 });
 
 
 
 /*Bestimmten User ausgeben*/
-app.get('/users/:name', function(req, res){
-   db.get('user;'+req.params.id, function(err,rep){
+app.get('/users/:id', function(req, res){
+   db.get('user:'+req.params.id, function(err,rep){
        if(rep){
            res.type('json').send(rep);
        }
        else{
-           res.status(404).type('plain').send('Der User mit der ' + req.params.id +' ist nicht vorhanden.');
+           res.status(404).type('plain').send('Der User mit der ID: ' + req.params.id +' ist nicht vorhanden.');
        }
    });
 });
 
-/*User löschen
+//User löschen
 app.delete('/users/:id', function(req, res){
-  var userID = req.params.id;
-
-  if (userID < user.length && user[userID].name != 0) {
-    user[userID] = {"name": 0, id: userID};
-    res.status(200).type('plain').send('Removed!');
-  }
-  else res.status(404).end();
+    var id = req.params.id;
+    db.exists('user:'+id, function(err,rep){
+        if(!rep)res.status(404).type('plain').send('Es ist exitiert kein User mit der ID '+id);
+        else{
+           db.del('user:'+id ,function (err, ret) {
+               res.status(204);
+               res.send();
+           }); 
+        }
+    });  
 });
-*/
 
 /*Songs*/
 
