@@ -53,11 +53,15 @@ app.post('/users', jsonParser, function(req, res){
     });
 });
 
-/*User ausgeben*/
+//User ausgeben
+/*Problem: bei leerer Datenbank funktionierts nicht.*/
 app.get('/users', function(req, res){
-    db.exists('user:', function(err,rep){
-    if(!rep)res.status(404).type('plain').send('Es ist keine Datenbank vorhanden.');
-    else{
+    /*db.exists('user:', function(err,rep){
+    console.log(rep);
+    if(rep==0){
+        res.status(404).type('plain').send('Es ist kein User in der Datenbank vorhanden.');
+    }
+    else{*/
         db.keys('user:*', function(err, keys){
             db.mget(keys, function(err, users){
                 users=users.map(function(user){
@@ -66,10 +70,25 @@ app.get('/users', function(req, res){
                 res.json(users);
             });
         });
-    }
-    });   
+    //}
+    //});   
 });
 
+
+//Einzelnen User bearbeiten
+app.put('/users/:id', function(req,res){
+    var id= req.params.id;
+    db.exists('user:'+id,function(err,rep){
+       if(rep==1){
+           var updatedUser = req.body;
+           updatedUser.id = id;
+           db.set('user:' + id , JSON.stringify(updatedUser),function(err,rep){
+               res.json(updatedUser);
+           });
+       }
+        else res.status(404).type('plain').send('Der User mit der ID ' + req.params.id + ' ist nicht vorhanden.'); 
+    });
+});
 
 
 /*Bestimmten User ausgeben*/
@@ -92,7 +111,7 @@ app.delete('/users/:id', function(req, res){
         else{
            db.del('user:'+id ,function (err, ret) {
                res.status(204);
-               res.send();
+               res.send("User mit der ID" + req.params.id + ' erfolgreich gelöscht.');
            }); 
         }
     });  
