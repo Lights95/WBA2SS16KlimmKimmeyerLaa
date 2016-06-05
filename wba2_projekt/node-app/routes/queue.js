@@ -7,78 +7,72 @@ var db = redis.createClient();
 //neues Lied an der Queue anhängen
 router.post('/', function(req, res){
     /*Filtert alle Songs*/
-    db.keys('queue:*', function(err, keys){
-        /*Gibt alle Songs aus der Warteschlange zurück*/
-        db.mget(keys, function(err, songs){
-            /*Überprüft, ob Variable einen Wert hat*/
-            if(songs===undefined){
-                songs =[];
-            }
-            /*Gibt Array zurück, mit allen Songs, die in der Warteschlange ind*/
-            songs=songs.map(function(song){
-                return JSON.parse(song);
-            });
-            var inQueue= false;
-            
-            /*Überprüft, ob der neue Nutzername vorhanden ist*/
-            songs.forEach(function(song){
-                if(song.title === req.body.title) {
-                    inQueue=true;
+    db.keys('allowedGenres:*', function(err, keys){
+        if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
+        db.mget(keys, function(err, genres){
+            if(genres===undefined) genres=[];
+                genres=genres.map(function(genre){
+                    return JSON.parse(genre);
+                });
+            genres.forEach(function(genre){
+                if(!(req.body.genre === genre.allowedGenres) || (req.body.genre===undefined)){
+                    return res.status(401).json({message: 'Songs von diesem Genre werden nicht abgespielt'});
                 }
             });
-            
-            
-            if(inQueue){
-                return res.status(401).json({message : "Der Song ist schon in der Queue."})
+        });
+    });
+    
+    db.lrange('queue',0,100, function(err,songs){
+        if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
+        
+        console.log("test");
+        songs=songs.map(function(song){
+            return JSON.parse(song);
+        });
+        var inQueue= false;
+        
+        if(inQueue){
+            return res.status(401).json({message : 'Der Song ist schon in der Queue.'});
+        }
+        
+        /*Überprüft, ob der neue Nutzername vorhanden ist*/
+        songs.forEach(function(song){
+            if(song.title === req.body.title) {
+                inQueue=true;
             }
-            /*Erstellt neuen User in der Datenbank*/
-            db.incr('queueNumber', function(err, queueNumber){
-                var song = req.body;
-                song.queueNumber=queueNumber;
-                db.set('queue:' + song.queueNumber, JSON.stringify(song), function(err, newOrder){
-                    /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/ 
-                    res.status(201).json(song);
-                });
+        });
+        
+        /*Erstellt neuen User in der Datenbank*/
+        db.incr('queueNumber', function(err, queueNumber){
+            var song = req.body;
+            song.queueNumber=queueNumber;
+            db.rpush('queue', JSON.stringify(song), function(err, newOrder){
+                /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/ 
+                 res.status(201).json(song);      
             });
         });
     });
 });
 
 //Warteschlange ausgeben
-/*Problem: bei leerer Datenbank funktionierts nicht.*/
 router.get('/', function(req, res){
-    db.keys('queue:*', function(err,keys){
+    db.lrange('queue', 0, 100, function(err, songs){
         if(err)res.status(404).type('plain').send('Error beim Auslesen.');
         else{
-            db.mget(keys, function(err, songs){
-                if(err)res.status(404).type('plain').send('Error beim Auslesen.');
-                else{
-                    songs=songs.map(function(song){
-                        return JSON.parse(song);
-                    });
-                    songs.sort(function(songa,songb){
-                        if(songa.queueNumber< songb.queueNumber){
-                            return -1;
-                        }
-                        if(songa.queueNumber > songb.queueNumber){
-                            return 1;
-                        }
-                        return 0;
-                    });
-                    res.status(200).json(songs);
-                }
+            songs=songs.map(function(song){
+                return JSON.parse(song);
             });
+            res.status(200).json(songs);
         }
     }); 
 });
 
-//Song aus der Queue löschen
-router.delete('/:queueNumber', function(req, res){
-    var queueNumber = req.params.queueNumber;
-    db.exists('queue:'+queueNumber, function(err,rep){
-        if(!rep)res.status(404).type('plain').send('Es ist exitiert kein Song in der Warteschlange mit der Nummer '+queueNumber);
+//gehörten Song entfernen
+router.delete('/', function(req, res){
+    db.llen('queue', function(err,rep){
+        if(rep===0)res.status(404).type('plain').send('Es ist exitiert kein Song in der Warteschlange');
         else{
-           db.del('queue:'+queueNumber ,function (err, rep) {
+           db.lpop('queue' ,function (err, rep) {
                res.status(204).send('Song aus der Warteschlange erfolgreich gelöscht.');
            }); 
         }
