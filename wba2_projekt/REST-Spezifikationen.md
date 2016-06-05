@@ -14,9 +14,9 @@
 |                         |   POST  |            Erstellt neues Genre            |  application/json  |  application/json  |
 |                         |  DELETE |              Löscht Musikgenre             |     text/plain     |     text/plain     |
 |                         |   PUT   |           Ändern des Musikgenres           |  application/json  |  application/json  |
-|    /user/{:id}/class    |   GET   |         Liste, aller Nutzerklassen         |     text/plain     |  application/json  |
-| /user/{:id}/class/{:id} |  DELETE |             Löscht Nutzerklasse            |     text/plain     |     text/plain     |
-|                         |   POST  |         Erstellt neue Nutzerklasse         |  application/json  |  application/json  |
+|    /users/{:id}/class    |   GET   |         Liste, aller Nutzerklassen         |     text/plain     |  application/json  |
+| /users/{:id}/class/{:id} |  DELETE |             Löscht Nutzerklasse            |     text/plain     |     text/plain     |
+| /users/{:id}/class                        |   POST  |         Erstellt neue Nutzerklasse         |  application/json  |  application/json  |
 |                         |   PUT   |             Ändert Nutzerklasse            |  application/json  |  application/json  |
 |         /artists        |   GET   |          Liste, aller Interpreten          |     text/plain     |  application/json  |
 |                         |   PUT   |              Ändert Interpret              |  application/json  |  application/json  |

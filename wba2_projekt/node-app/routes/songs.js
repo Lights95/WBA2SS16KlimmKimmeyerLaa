@@ -1,0 +1,107 @@
+var express = require('express');
+var redis = require('redis');
+var router = express.Router();
+var db = redis.createClient();
+
+/*Songs*/
+
+//Song erstellen
+router.post('/', function(req, res){
+    /*Filtert alle Songs*/
+    db.keys('song:*', function(err, keys){
+        /*Gibt alle Songs aus der DB zurück*/
+        db.mget(keys, function(err, songs){
+            /*Überprüft, ob Variable einen Wert hat*/
+            if(songs===undefined){
+                songs =[];
+            }
+            /*Gibt neues Array zurück, welches alle Songs enthält*/
+            songs=songs.map(function(song){
+                return JSON.parse(song);
+            });
+            var gesetzt= false;
+            
+            /*Überprüft, ob der neue Songname vorhanden ist*/
+            songs.forEach(function(song){
+                if(song.title === req.body.title) {
+                    gesetzt=true;
+                }
+            });
+            
+            
+            if(gesetzt){
+                return res.status(401).json({message : "Song bereits vorhanden."})
+            }
+            /*Erstellt neuen User in der Datenbank*/
+            db.incr('songIDs', function(err, id){
+                var song = req.body;
+                song.artist=[];
+                song.genre=[];
+                song.id=id;
+                db.set('song:' + song.id, JSON.stringify(song), function(err, newSong){
+                    /*neuer Song wird als JSON Objekt zurückgegeben*/ 
+                    res.status(201).json(song);
+                });
+            });
+        });
+    });
+});
+
+//Alle Songs ausgeben
+router.get('/', function(req, res){
+    db.keys('song:*', function(err,keys){
+        if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+        else{
+            db.mget(keys, function(err, songs){
+                if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+                else{
+                    songs=songs.map(function(song){
+                        return JSON.parse(song);
+                    });
+                    res.status(200).json(songs);
+                }
+            });
+        }
+    }); 
+});
+
+//Song bearbeiten
+router.put('/:id', function(req,res){
+    var id= req.params.id;
+    db.exists('song:'+id,function(err,rep){
+       if(rep==1){
+           var updatedSong = req.body;
+           updatedSong.id = id;
+           db.set('song:' + id , JSON.stringify(updatedSong),function(err,rep){
+               res.json(updatedSong);
+           });
+       }
+        else res.status(404).type('plain').send('Der Song mit der ID ' + req.params.id + ' ist nicht vorhanden.'); 
+    });
+});+
+
+//Bestimmten Song ausgeben
+router.get('/:id', function(req, res){
+   db.get('song:'+req.params.id, function(err,rep){
+       if(rep){
+           res.type('json').send(rep);
+       }
+       else{
+           res.status(404).type('plain').send('Der Song mit der ID: ' + req.params.id +' ist nicht vorhanden.');
+       }
+   });
+});
+
+//Song löschen
+router.delete('/:id', function(req, res){
+    var id = req.params.id;
+    db.exists('song:'+id, function(err,rep){
+        if(!rep)res.status(404).type('plain').send('Es ist exitiert kein Song mit der ID '+id);
+        else{
+           db.del('song:'+id ,function (err, rep) {
+               res.status(204).send('Song mit der ID' + req.params.id + ' erfolgreich gelöscht.');
+           }); 
+        }
+    });  
+});   
+module.exports = router;
