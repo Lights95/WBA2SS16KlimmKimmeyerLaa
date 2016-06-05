@@ -24,5 +24,4 @@
 |                         |   POST  |         Erstellt neuen Interpreten         |  application/json  |  application/json  |
 |          /queue         |   GET   |         Zeigt komplette Warteliste         |     text/plain     |  application/json  |
 |                         |   POST  |    Fügt neues Lied der Warteliste hinzu    |  application/json  |  application/json  |
-|       /queue/:{id}      |   PUT   |       Ändert Lied aus der Warteliste       |  application/json  |  application/json  |
 |                         |  DELETE |       Löscht Lied aus der Warteliste       |     text/plain     |     text/plain     |
