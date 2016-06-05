@@ -70,7 +70,7 @@ router.put('/:id', function(req,res){
        if(rep==1){
            var updatedUser = req.body;
            updatedUser.id = id;
-           db.set('user:' + id , JSON.stringify(updatedUser),function(err,rep){
+           db.set('user:' + updatedUser.id , JSON.stringify(updatedUser),function(err,rep){
                res.json(updatedUser);
            });
        }

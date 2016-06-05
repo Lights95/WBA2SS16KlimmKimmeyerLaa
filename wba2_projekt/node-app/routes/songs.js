@@ -72,8 +72,8 @@ router.put('/:id', function(req,res){
        if(rep==1){
            var updatedSong = req.body;
            updatedSong.id = id;
-           db.set('song:' + id , JSON.stringify(updatedSong),function(err,rep){
-               res.json(updatedSong);
+           db.set('song:' + updatedSong.id , JSON.stringify(updatedSong),function(err,rep){
+               res.status(201).json(updatedSong);
            });
        }
         else res.status(404).type('plain').send('Der Song mit der ID ' + req.params.id + ' ist nicht vorhanden.'); 

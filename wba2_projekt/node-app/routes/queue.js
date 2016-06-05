@@ -56,6 +56,15 @@ router.get('/', function(req, res){
                     songs=songs.map(function(song){
                         return JSON.parse(song);
                     });
+                    songs.sort(function(songa,songb){
+                        if(songa.queueNumber< songb.queueNumber){
+                            return -1;
+                        }
+                        if(songa.queueNumber > songb.queueNumber){
+                            return 1;
+                        }
+                        return 0;
+                    });
                     res.status(200).json(songs);
                 }
             });

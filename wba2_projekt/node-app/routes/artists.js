@@ -70,7 +70,7 @@ router.put('/:id', function(req,res){
        if(rep==1){
            var updatedArtist = req.body;
            updatedArtist.id = id;
-           db.set('artist:' + id , JSON.stringify(updatedArtist),function(err,rep){
+           db.set('artist:' + updatedArtist.id , JSON.stringify(updatedArtist),function(err,rep){
                res.json(updatedArtist);
            });
        }
