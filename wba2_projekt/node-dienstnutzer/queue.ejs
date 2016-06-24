@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Warteschlange</title>
+  </head>
+  <body>
+    <h1>Warteschlange</h1>
+    <ul>
+      <%
+        for(var i=0; i < queue.length; i++) {
+          %><li><%= queue[i].name %></li><%
+        }
+      %>
+    </ul>
+  </body>
+</html>
