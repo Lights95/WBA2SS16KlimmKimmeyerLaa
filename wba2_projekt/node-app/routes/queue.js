@@ -15,40 +15,41 @@ router.post('/', function(req, res){
                     return JSON.parse(genre);
                 });
             genres.forEach(function(genre){
-                if(!(req.body.genre === genre.allowedGenres) || (req.body.genre===undefined)){
+                //vorher war !(req.body.genre === genre.allowedGenres)
+                if((req.body.genre !== genre.allowedGenres) || (req.body.genre===undefined)){
                     return res.status(401).json({message: 'Songs von diesem Genre werden nicht abgespielt'});
                 }
             });
         });
     });
-    
+
     db.lrange('queue',0,100, function(err,songs){
         if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
-        
+
         console.log("test");
         songs=songs.map(function(song){
             return JSON.parse(song);
         });
         var inQueue= false;
-        
+
         if(inQueue){
             return res.status(401).json({message : 'Der Song ist schon in der Queue.'});
         }
-        
+
         /*Überprüft, ob der neue Nutzername vorhanden ist*/
         songs.forEach(function(song){
             if(song.title === req.body.title) {
                 inQueue=true;
             }
         });
-        
+
         /*Erstellt neuen User in der Datenbank*/
         db.incr('queueNumber', function(err, queueNumber){
             var song = req.body;
             song.queueNumber=queueNumber;
             db.rpush('queue', JSON.stringify(song), function(err, newOrder){
-                /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/ 
-                 res.status(201).json(song);      
+                /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/
+                 res.status(201).json(song);
             });
         });
     });
@@ -64,7 +65,7 @@ router.get('/', function(req, res){
             });
             res.status(200).json(songs);
         }
-    }); 
+    });
 });
 
 //gehörten Song entfernen
@@ -74,9 +75,9 @@ router.delete('/', function(req, res){
         else{
            db.lpop('queue' ,function (err, rep) {
                res.status(204).send('Song aus der Warteschlange erfolgreich gelöscht.');
-           }); 
+           });
         }
-    });  
+    });
 });
 
 module.exports = router;

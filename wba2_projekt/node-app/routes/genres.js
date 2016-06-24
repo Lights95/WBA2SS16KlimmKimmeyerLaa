@@ -18,17 +18,17 @@ router.post('/', function(req, res){
                 return JSON.parse(genre);
             });
             var gesetzt= false;
-            
+
             /*Überprüft, ob der neue Nutzername vorhanden ist*/
             genres.forEach(function(genre){
                 if(genre.name === req.body.name) {
                     gesetzt=true;
                 }
             });
-            
-            
+
+
             if(gesetzt){
-                return res.status(401).json({message : "Genre bereits vorhanden."})
+                return res.status(401).json({message : "Genre bereits vorhanden."});
             }
             /*Erstellt neues Genre in der Datenbank*/
             db.incr('genreID', function(err, id){
@@ -36,7 +36,7 @@ router.post('/', function(req, res){
                 genre.groups=[];
                 genre.id=id;
                 db.set('genre:' + genre.id, JSON.stringify(genre), function(err, newGenre){
-                    /*neues Genre wird als JSON Objektzurückgegeben*/ 
+                    /*neues Genre wird als JSON Objektzurückgegeben*/
                     res.status(201).json(genre);
                 });
             });
@@ -59,7 +59,7 @@ router.get('/', function(req, res){
                 }
             });
         }
-    }); 
+    });
 });
 
 
@@ -74,7 +74,7 @@ router.put('/:id', function(req,res){
                res.json(updatedGenre);
            });
        }
-        else res.status(404).type('plain').send('Das Genre mit der ID ' + req.params.id + ' ist nicht vorhanden.'); 
+        else res.status(404).type('plain').send('Das Genre mit der ID ' + req.params.id + ' ist nicht vorhanden.');
     });
 });
 
@@ -99,8 +99,8 @@ router.delete('/:id', function(req, res){
         else{
            db.del('genre:'+id ,function (err, rep) {
                res.status(204).send('Genre mit der ID' + req.params.id + ' erfolgreich gelöscht.');
-           }); 
+           });
         }
-    });  
+    });
 });
 module.exports = router;

@@ -18,17 +18,17 @@ router.post('/', function(req, res){
                 return JSON.parse(artist);
             });
             var gesetzt= false;
-            
+
             /*Überprüft, ob der neue Artist vorhanden ist*/
             artists.forEach(function(artist){
                 if(artist.name === req.body.name) {
                     gesetzt=true;
                 }
             });
-            
-            
+
+
             if(gesetzt){
-                return res.status(401).json({message : "Artist bereits vorhanden."})
+                return res.status(401).json({message : "Artist bereits vorhanden."});
             }
             /*Erstellt neuen Artist in der Datenbank*/
             db.incr('artistIDs', function(err, id){
@@ -36,7 +36,7 @@ router.post('/', function(req, res){
                 artist.genre=[];
                 artist.id=id;
                 db.set('artist:' + artist.id, JSON.stringify(artist), function(err, newArtist){
-                    /*neuer Artist wird als JSON Objekt zurückgegeben*/ 
+                    /*neuer Artist wird als JSON Objekt zurückgegeben*/
                     res.status(201).json(artist);
                 });
             });
@@ -59,7 +59,7 @@ router.get('/', function(req, res){
                 }
             });
         }
-    }); 
+    });
 });
 
 
@@ -74,7 +74,7 @@ router.put('/:id', function(req,res){
                res.json(updatedArtist);
            });
        }
-        else res.status(404).type('plain').send('Der Artist mit der ID ' + req.params.id + ' ist nicht vorhanden.'); 
+        else res.status(404).type('plain').send('Der Artist mit der ID ' + req.params.id + ' ist nicht vorhanden.');
     });
 });
 
@@ -99,9 +99,9 @@ router.delete('/:id', function(req, res){
         else{
            db.del('artist:'+id ,function (err, rep) {
                res.status(204).send('Artist mit der ID' + req.params.id + ' erfolgreich gelöscht.');
-           }); 
+           });
         }
-    });  
+    });
 });
 
 module.exports = router;

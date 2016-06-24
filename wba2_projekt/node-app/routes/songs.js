@@ -20,17 +20,17 @@ router.post('/', function(req, res){
                 return JSON.parse(song);
             });
             var gesetzt= false;
-            
+
             /*Überprüft, ob der neue Songname vorhanden ist*/
             songs.forEach(function(song){
                 if(song.title === req.body.title) {
                     gesetzt=true;
                 }
             });
-            
-            
+
+
             if(gesetzt){
-                return res.status(401).json({message : "Song bereits vorhanden."})
+                return res.status(401).json({message : "Song bereits vorhanden."});
             }
             /*Erstellt neuen User in der Datenbank*/
             db.incr('songIDs', function(err, id){
@@ -39,7 +39,7 @@ router.post('/', function(req, res){
                 song.genre=[];
                 song.id=id;
                 db.set('song:' + song.id, JSON.stringify(song), function(err, newSong){
-                    /*neuer Song wird als JSON Objekt zurückgegeben*/ 
+                    /*neuer Song wird als JSON Objekt zurückgegeben*/
                     res.status(201).json(song);
                 });
             });
@@ -62,7 +62,7 @@ router.get('/', function(req, res){
                 }
             });
         }
-    }); 
+    });
 });
 
 //Song bearbeiten
@@ -76,15 +76,15 @@ router.put('/:id', function(req,res){
                res.status(201).json(updatedSong);
            });
        }
-        else res.status(404).type('plain').send('Der Song mit der ID ' + req.params.id + ' ist nicht vorhanden.'); 
+        else res.status(404).type('plain').send('Der Song mit der ID ' + req.params.id + ' ist nicht vorhanden.');
     });
-});+
+});
 
 //Bestimmten Song ausgeben
 router.get('/:id', function(req, res){
    db.get('song:'+req.params.id, function(err,rep){
        if(rep){
-           res.type('json').send(rep);
+           res.status(200).type('json').send(rep);
        }
        else{
            res.status(404).type('plain').send('Der Song mit der ID: ' + req.params.id +' ist nicht vorhanden.');
@@ -100,8 +100,8 @@ router.delete('/:id', function(req, res){
         else{
            db.del('song:'+id ,function (err, rep) {
                res.status(204).send('Song mit der ID' + req.params.id + ' erfolgreich gelöscht.');
-           }); 
+           });
         }
-    });  
-});   
+    });
+});
 module.exports = router;

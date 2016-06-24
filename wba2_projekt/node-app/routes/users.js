@@ -19,17 +19,17 @@ router.post('/', function(req, res){
                 return JSON.parse(user);
             });
             var gesetzt= false;
-            
+
             /*Überprüft, ob der neue Nutzername vorhanden ist*/
             users.forEach(function(user){
                 if(user.name === req.body.name) {
                     gesetzt=true;
                 }
             });
-            
-            
+
+
             if(gesetzt){
-                return res.status(401).json({message : "Username bereits vergeben."})
+                return res.status(401).json({message : "Username bereits vergeben."});
             }
             /*Erstellt neuen User in der Datenbank*/
             db.incr('userIDs', function(err, id){
@@ -37,7 +37,7 @@ router.post('/', function(req, res){
                 user.groups=[];
                 user.id=id;
                 db.set('user:' + user.id, JSON.stringify(user), function(err, newUser){
-                    /*neuer User wird als JSON Objekt zurückgegeben*/ 
+                    /*neuer User wird als JSON Objekt zurückgegeben*/
                     res.status(201).json(user);
                 });
             });
@@ -60,7 +60,7 @@ router.get('/', function(req, res){
                 }
             });
         }
-    }); 
+    });
 });
 
 //Einzelnen User bearbeiten
@@ -74,7 +74,7 @@ router.put('/:id', function(req,res){
                res.json(updatedUser);
            });
        }
-        else res.status(404).type('plain').send('Der User mit der ID ' + req.params.id + ' ist nicht vorhanden.'); 
+        else res.status(404).type('plain').send('Der User mit der ID ' + req.params.id + ' ist nicht vorhanden.');
     });
 });
 
@@ -99,8 +99,8 @@ router.delete('/:id', function(req, res){
         else{
            db.del('user:'+id ,function (err, rep) {
                res.status(204).send("User mit der ID" + req.params.id + ' erfolgreich gelöscht.');
-           }); 
+           });
         }
-    });  
+    });
 });
 module.exports = router;
