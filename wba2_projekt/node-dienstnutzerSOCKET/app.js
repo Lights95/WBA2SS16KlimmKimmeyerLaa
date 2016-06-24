@@ -21,48 +21,27 @@ io.on('connection', function(socket){
 
   /* ClientSocket der Socket-Liste hinzufügen*/
   clientSockets.push(socket);
-  console.log('Verbindung hergestellt!');
+  console.log('Verbindung mit Webapp hergestellt!');
 
-
-
-
-  socket.on('message', function(data){
-    console.log(data);
-
-    var options = {
-        host: 'localhost',
-        port: 3000,
-        path: '/api/queue',
-        method: 'GET',
-        headers: {
-          accept: 'application/json'
-        }
-    };
-
-    var externalRequest = http.request(options, function(externalResponse){
-      console.log('Connected');
-      externalResponse.on('data', function(chunk){
-        var queuedata = JSON.parse(chunk);
-        socket.send(queuedata);
-      });
-    });
-
-    externalRequest.end();
-
-    /* Nachricht, die von einem CLient kommt, an alle anderen CLients weierreichen */
-    /*
-    clientSockets.forEach(function(clientSocket) {
-      clientSocket.send(data);
-    });*/
+  /*Senden der Daten*/
+  socket.on('getQueue', function(){
+    sendQueue(socket);
   });
 
+  socket.on('getSongs', function(){
+    sendSongs(socket);
+  });
 
-
+  /*Verarbeite Daten*/
+  socket.on('postQueue', function(data){
+    postQueue(data);
+    //sendQueue(socket);
+  });
 
 
   /* ClientSocket bei Verbindungsabbruch aus der Socket-Liste entfernen */
   socket.on('disconnect', function(){
-    console.log("Verbindung abgebrochen!");
+    console.log("Verbindung mit Webapp abgebrochen!");
     clientSockets.splice(clientSockets.indexOf(socket),1);
   });
 });
@@ -70,3 +49,75 @@ io.on('connection', function(socket){
 
 
 httpServer.listen(port);
+
+/* Nachricht, die von einem CLient kommt, an alle anderen CLients weierreichen */
+/*
+clientSockets.forEach(function(clientSocket) {
+  clientSocket.send(data);
+});*/
+
+/*API Functions*/
+function sendQueue(socket) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/queue',
+      method: 'GET',
+      headers: {
+        accept: 'application/json'
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.on('data', function(chunk){
+      var queuedata = JSON.parse(chunk);
+      socket.emit("resQueue",queuedata);
+    });
+  });
+  externalRequest.end();
+}
+
+function sendSongs(socket) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/songs',
+      method: 'GET',
+      headers: {
+        accept: 'application/json'
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.on('data', function(chunk){
+      var songdata = JSON.parse(chunk);
+      socket.emit("resSongs",songdata);
+    });
+  });
+  externalRequest.end();
+}
+
+function postQueue(index) {
+  /*var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/queue',
+      method: 'POST',
+      headers: {
+        accept: 'application/json'
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.setEncoding('utf8');
+    externalResponse.on('data', function(chunk){
+      var queuedata = JSON.parse(chunk);
+      //socket.emit("resQueue",queuedata);
+    });
+  });
+  externalRequest.write('{"id": "XX", "genre": "House"}');
+  externalRequest.end();*/
+}
