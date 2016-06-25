@@ -2,6 +2,26 @@ var express = require('express');
 var redis = require('redis');
 var router = express.Router();
 var db = redis.createClient();
+var Ajv = require('ajv');
+var ajv = Ajv({allErrors: true});
+
+/*Schema Artist*/
+var artistSchema={
+    'properties': {
+        'id': {
+            'type': 'number',
+            'maxProperties': '1'
+        },
+        'name':{
+            'type': 'string',
+            'maxProperties': '3'
+        },
+        'genres': {'type': 'number'}
+    },
+    'required': ['id', 'name', 'genres']
+};
+
+var validate = ajv.compile(artistSchema);
 
 /*Artists*/
 router.post('/', function(req, res){

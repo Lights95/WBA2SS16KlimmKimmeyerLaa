@@ -1,9 +1,41 @@
 var express = require('express');
 var redis = require('redis');
+var Ajv = require('ajv');
 var router = express.Router();
 var db = redis.createClient();
+var ajv = Ajv({allErrors: true});
 
-/*Songs*/
+
+/*Songsschema*/
+var songSchema={
+    'properties': {
+        'id': {
+            'type': 'integer',
+            'maxProperties': '1'
+        },
+        'name':{
+            'type': 'string',
+            'maxProperties': '3'
+        },
+        'artist': {
+            'type': 'integer',
+            'maxProperties:' '3'
+        },
+        'genre' : {
+            'type': 'integer',
+            'maxProperties': '2'
+        },
+        'year': {
+            'type': 'integer',
+            'maxProperties': '1'
+        }
+    },
+    'required': ['id', 'name', 'genre', 'artist']
+};
+
+var validate = ajv.compile(songSchema);
+
+
 
 //Song erstellen
 router.post('/', function(req, res){

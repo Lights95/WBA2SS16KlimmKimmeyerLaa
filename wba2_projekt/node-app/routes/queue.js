@@ -7,6 +7,7 @@ var db = redis.createClient();
 //neues Lied an der Queue anhängen
 router.post('/', function(req, res){
     /*Filtert alle Songs*/
+    var unAllowed = false;
     db.keys('allowedGenres:*', function(err, keys){
         if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
         db.mget(keys, function(err, genres){
@@ -17,7 +18,7 @@ router.post('/', function(req, res){
             genres.forEach(function(genre){
                 //vorher war !(req.body.genre === genre.allowedGenres)
                 if((req.body.genre !== genre.allowedGenres) || (req.body.genre===undefined)){
-                    return res.status(406).json({message: 'Songs von diesem Genre werden nicht abgespielt'});
+                    unAllowed=true;
                 }
             });
         });
@@ -31,9 +32,9 @@ router.post('/', function(req, res){
             return JSON.parse(song);
         });
         var inQueue= false;
-
-        if(inQueue){
-            return res.status(406).json({message : 'Der Song ist schon in der Queue.'});
+        
+        if(unAllowed){
+            return res.status(403).json({message: 'Genre dieses Songs passt nicht zur Party.'});
         }
 
         /*Überprüft, ob der neue Nutzername vorhanden ist*/
@@ -42,6 +43,10 @@ router.post('/', function(req, res){
                 inQueue=true;
             }
         });
+        
+        if(inQueue){
+            return res.status(406).json({message : 'Der Song ist schon in der Queue.'});
+        }
 
         /*Erstellt neuen User in der Datenbank*/
         db.incr('queueNumber', function(err, queueNumber){

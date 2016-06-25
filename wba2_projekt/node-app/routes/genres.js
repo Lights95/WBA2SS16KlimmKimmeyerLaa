@@ -1,7 +1,25 @@
 var express = require('express');
+var Ajv = require('ajv');
 var redis = require('redis');
 var router = express.Router();
 var db = redis.createClient();
+var ajv = Ajv({allErrors: true});
+
+var genreSchema={
+    'properties': {
+        'id': {
+            'type': 'number',
+            'maxProperties': '1'
+        },
+        'name':{
+            'type': 'string',
+            'maxProperties': '1'
+        }
+    },
+    'required': ['id', 'name']
+};
+
+var validate = ajv.compile(genreSchema);
 
 /*Genres*/
 router.post('/', function(req, res){

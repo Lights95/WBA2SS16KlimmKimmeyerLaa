@@ -1,9 +1,31 @@
 var express = require('express');
 var redis = require('redis');
+var Ajv = require('ajv');
 var router = express.Router();
 var db = redis.createClient();
+var ajv = Ajv({allErrors: true});
 
 /*User*/
+
+var userSchema={
+    'properties': {
+        'id': {
+            'type': 'number',
+            'maxProperties': '1'
+        },
+        'name': {
+            'type': 'string',
+            maxProperties: '1'
+        },
+        'group':{
+            'type': 'string',
+            'maxProperties': '1'
+        }
+    },
+    'required': ['id', 'name', 'group']
+};
+
+
 /*User anlegen*/
 router.post('/', function(req, res){
     /*Filtert alle User*/
