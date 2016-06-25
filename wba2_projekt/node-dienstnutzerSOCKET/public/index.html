@@ -131,10 +131,14 @@
             &copy; 2016 - Marvin Klimm, Johannes Kimmeyer &amp; Lena Laaser
           </div>
           <div class="mdl-mini-footer--right-section">
-
           </div>
         </footer>
       </main>
+      <!--Toast-->
+      <div id="demo-toast-example" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+      </div>
     </div>
     <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
     <script src="/socket.io/socket.io.js" charset="utf-8"></script>
@@ -145,7 +149,7 @@
 
       /*Anfordern der Daten*/
       socket.emit("getQueue");
-      socket.emit("getSongs")
+      socket.emit("getSongs");
 
       /*Bei empfangen der Daten*/
       socket.on('resQueue', function(queue){
@@ -158,59 +162,76 @@
         displaySongs(songs);
       });
 
-      /*send_input.addEventListener('click', function(e) {
-        var msg = msg_input.value;
-        msg_input.value = "";
-
-        socket.send(msg);
-      });*/
+      /*Sobald eine Meldung eingeht*/
+      socket.on('resMeldung', function(msg){
+        meldung(msg);
+      });
 
       function displayQueue(data) {
-        for (var i = 0; i < data.length; i++) {
-          var note;
-          if(i === 0) note = '(next Song!)';
-          else note = '';
-          var newQueueObject = document.createElement("section");
-          newQueueObject.className = "section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp";
-          newQueueObject.innerHTML =
-          '<header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">' +
-            '<i class="material-icons">play_circle_filled</i>'+
-          '</header>'+
-          '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
-            '<div class="mdl-card__supporting-text">'+
-              '<h4>#'+data[i].queueNumber+' '+data[i].title+' '+note+'</h4>'+
-              'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
-            '</div>'+
-          '</div>';
-          document.getElementById("queue").appendChild(newQueueObject);
+        if (data.length == 0) document.getElementById("queue").innerHTML = '<section class="section--center" style="text-align: center;"><p>Zur Zeit keine Songs in der Warteliste!</p></section>';
+        else {
+          document.getElementById("queue").innerHTML = "";
+          for (var i = 0; i < data.length; i++) {
+            var note;
+            if(i === 0) note = '(next Song!)';
+            else note = '';
+            var newQueueObject = document.createElement("section");
+            newQueueObject.className = "section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp";
+            newQueueObject.innerHTML =
+            '<header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">' +
+              '<i class="material-icons">play_circle_filled</i>'+
+            '</header>'+
+            '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
+              '<div class="mdl-card__supporting-text">'+
+                '<h4>#'+data[i].queueNumber+' '+data[i].title+' '+note+'</h4>'+
+                'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
+              '</div>'+
+            '</div>';
+            document.getElementById("queue").appendChild(newQueueObject);
+          }
         }
       }
 
 
       function displaySongs(data) {
-        document.getElementById("songs").innerHTML = "";
-        for (var i = 0; i < data.length; i++) {
-          var newSonglistObject = document.createElement("section");
-          newSonglistObject.className = "section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp";
-          newSonglistObject.innerHTML =
-          '<header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">' +
-            '<i class="material-icons">play_circle_filled</i>'+
-          '</header>'+
-          '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
-            '<div class="mdl-card__supporting-text">'+
-              '<h4>#'+(i+1)+' '+data[i].title+'</h4>'+
-              'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
-            '</div>'+
-            '<div class="mdl-card__actions">'+
-              '<a href="#" class="mdl-button" onclick="addToQueue('+data[i].id+');">Zur Warteliste hinzufügen</a>'+
-            '</div>'+
-          '</div>';
+        if (data.length == 0) document.getElementById("songs").innerHTML = '<section class="section--center" style="text-align: center;"><p>Zur Zeit keine Songs in der Warteliste!</p></section>';
+        else {
+          document.getElementById("songs").innerHTML = "";
+          for (var i = 0; i < data.length; i++) {
+            var newSonglistObject = document.createElement("section");
+            newSonglistObject.className = "section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp";
+            newSonglistObject.innerHTML =
+            '<header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">' +
+              '<i class="material-icons">play_circle_filled</i>'+
+            '</header>'+
+            '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
+              '<div class="mdl-card__supporting-text">'+
+                '<h4>#'+(i+1)+' '+data[i].title+'</h4>'+
+                'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
+              '</div>'+
+              '<div class="mdl-card__actions">'+
+                '<a href="#" class="mdl-button" onclick="addToQueue('+data[i].id+');">Zur Warteliste hinzufügen</a>'+
+              '</div>'+
+            '</div>';
 
-          document.getElementById("songs").appendChild(newSonglistObject);
+            document.getElementById("songs").appendChild(newSonglistObject);
+          }
         }
       }
       function addToQueue(id) {
         socket.emit("postQueue", id);
+      }
+
+      /*Um Meldungen zu machen*/
+      function meldung(msg) {
+        (function() {
+          'use strict';
+          window['counter'] = 0;
+          var snackbarContainer = document.querySelector('#demo-toast-example');
+            'use strict';
+            var data = {message: msg};
+            snackbarContainer.MaterialSnackbar.showSnackbar(data);
+        }());
       }
     </script>
   </body>

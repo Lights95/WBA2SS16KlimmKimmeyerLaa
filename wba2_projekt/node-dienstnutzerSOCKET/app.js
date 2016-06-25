@@ -34,7 +34,8 @@ io.on('connection', function(socket){
 
   /*Verarbeite Daten*/
   socket.on('postQueue', function(data){
-    postQueue(data);
+    postQueue(socket, data);
+    //sendMeldung(socket, "Test");
     //sendQueue(socket);
   });
 
@@ -49,12 +50,6 @@ io.on('connection', function(socket){
 
 
 httpServer.listen(port);
-
-/* Nachricht, die von einem CLient kommt, an alle anderen CLients weierreichen */
-/*
-clientSockets.forEach(function(clientSocket) {
-  clientSocket.send(data);
-});*/
 
 /*API Functions*/
 function sendQueue(socket) {
@@ -99,8 +94,8 @@ function sendSongs(socket) {
   externalRequest.end();
 }
 
-function postQueue(index) {
-  /*var options = {
+function postQueue(socket, data) {
+  var options = {
       host: 'localhost',
       port: 3000,
       path: '/api/queue',
@@ -115,9 +110,22 @@ function postQueue(index) {
     externalResponse.setEncoding('utf8');
     externalResponse.on('data', function(chunk){
       var queuedata = JSON.parse(chunk);
-      //socket.emit("resQueue",queuedata);
+      sendMeldung(socket, "Song hinzugefügt!");
+
+      /*jedem Client die neue Queue senden*/
+      clientSockets.forEach(function(clientSocket) {
+        sendQueue(clientSocket);
+      });
+
+    });
+    externalResponse.on('error', function(e) {
+      sendMeldung(socket, "Error: "+e);
     });
   });
-  externalRequest.write('{"id": "XX", "genre": "House"}');
-  externalRequest.end();*/
+  externalRequest.write('{"id": "XX"}');
+  externalRequest.end();
+}
+
+function sendMeldung(socket, meldung) {
+  socket.emit("resMeldung",meldung);
 }
