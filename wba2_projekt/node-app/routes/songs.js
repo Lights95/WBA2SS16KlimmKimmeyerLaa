@@ -11,23 +11,23 @@ var songSchema={
     'properties': {
         'id': {
             'type': 'integer',
-            'maxProperties': '1'
+            'maxProperties': 1
         },
         'name':{
             'type': 'string',
-            'maxProperties': '3'
+            'maxProperties': 3
         },
         'artist': {
             'type': 'integer',
-            'maxProperties:' '3'
+            'maxProperties': 3
         },
         'genre' : {
             'type': 'integer',
-            'maxProperties': '2'
+            'maxProperties': 2
         },
         'year': {
             'type': 'integer',
-            'maxProperties': '1'
+            'maxProperties': 1
         }
     },
     'required': ['id', 'name', 'genre', 'artist']

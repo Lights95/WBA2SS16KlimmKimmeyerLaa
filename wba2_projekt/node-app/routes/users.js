@@ -11,15 +11,15 @@ var userSchema={
     'properties': {
         'id': {
             'type': 'number',
-            'maxProperties': '1'
+            'maxProperties': 1
         },
         'name': {
             'type': 'string',
-            maxProperties: '1'
+            maxProperties: 1
         },
         'group':{
             'type': 'string',
-            'maxProperties': '1'
+            'maxProperties': 1
         }
     },
     'required': ['id', 'name', 'group']

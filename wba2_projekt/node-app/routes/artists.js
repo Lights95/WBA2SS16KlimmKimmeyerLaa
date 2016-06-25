@@ -10,11 +10,11 @@ var artistSchema={
     'properties': {
         'id': {
             'type': 'number',
-            'maxProperties': '1'
+            'maxProperties': 1
         },
         'name':{
             'type': 'string',
-            'maxProperties': '3'
+            'maxProperties': 3
         },
         'genres': {'type': 'number'}
     },
