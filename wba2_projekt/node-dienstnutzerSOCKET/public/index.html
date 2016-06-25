@@ -76,13 +76,15 @@
           </div>
           <div class="section__text mdl-cell mdl-cell--4-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
             <h5><span id="songsInDB">0</span> Songs verfügbar</h5>
-            <p>Aus den Genres: House, HipHop, RnB, Schlager</p>
-            <p>Der Interpreten: </p>
+            <!--<p>Aus den Genres: House, HipHop, RnB, Schlager</p>
+            <p>Der Interpreten: </p>-->
           </div>
         </section>
 
         <div class="mdl-layout__tab-panel is-active" id="queue">
-
+          <section class="section--center" style="text-align: center;">
+            <p>Zur Zeit keine Songs in der Warteliste!</p>
+          </section>
           <!--<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
             <header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
               <i class="material-icons">play_circle_filled</i>
@@ -96,6 +98,9 @@
           </section>-->
         </div>
         <div class="mdl-layout__tab-panel" id="songs">
+          <section class="section--center" style="text-align: center;">
+            <p>Zur Zeit keine Songs verfügbar!</p>
+          </section>
           <!--<section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
             <header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
               <i class="material-icons">play_circle_filled</i>
@@ -144,10 +149,12 @@
 
       /*Bei empfangen der Daten*/
       socket.on('resQueue', function(queue){
+        document.getElementById("songsInQueue").innerHTML = queue.length
         displayQueue(queue);
       });
 
       socket.on('resSongs', function(songs){
+        document.getElementById("songsInDB").innerHTML = songs.length;
         displaySongs(songs);
       });
 
@@ -172,16 +179,16 @@
           '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
             '<div class="mdl-card__supporting-text">'+
               '<h4>#'+data[i].queueNumber+' '+data[i].title+' '+note+'</h4>'+
-              'Interpret: '+data[i].interpret+ ' <br>Genre: '+data[i].genre+
+              'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
             '</div>'+
           '</div>';
-
           document.getElementById("queue").appendChild(newQueueObject);
         }
       }
 
 
       function displaySongs(data) {
+        document.getElementById("songs").innerHTML = "";
         for (var i = 0; i < data.length; i++) {
           var newSonglistObject = document.createElement("section");
           newSonglistObject.className = "section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp";
@@ -192,7 +199,7 @@
           '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
             '<div class="mdl-card__supporting-text">'+
               '<h4>#'+(i+1)+' '+data[i].title+'</h4>'+
-              'Interpret: '+data[i].interpret+ ' <br>Genre: '+data[i].genre+
+              'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
             '</div>'+
             '<div class="mdl-card__actions">'+
               '<a href="#" class="mdl-button" onclick="addToQueue('+data[i].id+');">Zur Warteliste hinzufügen</a>'+
