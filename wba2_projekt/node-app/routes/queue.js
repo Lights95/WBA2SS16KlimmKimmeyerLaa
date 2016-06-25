@@ -17,7 +17,7 @@ router.post('/', function(req, res){
             genres.forEach(function(genre){
                 //vorher war !(req.body.genre === genre.allowedGenres)
                 if((req.body.genre !== genre.allowedGenres) || (req.body.genre===undefined)){
-                    return res.status(401).json({message: 'Songs von diesem Genre werden nicht abgespielt'});
+                    return res.status(406).json({message: 'Songs von diesem Genre werden nicht abgespielt'});
                 }
             });
         });
@@ -33,7 +33,7 @@ router.post('/', function(req, res){
         var inQueue= false;
 
         if(inQueue){
-            return res.status(401).json({message : 'Der Song ist schon in der Queue.'});
+            return res.status(406).json({message : 'Der Song ist schon in der Queue.'});
         }
 
         /*Überprüft, ob der neue Nutzername vorhanden ist*/

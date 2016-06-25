@@ -28,7 +28,7 @@ router.post('/', function(req, res){
 
 
             if(gesetzt){
-                return res.status(401).json({message : "Genre bereits vorhanden."});
+                return res.status(200).json({message : "Genre bereits vorhanden."});
             }
             /*Erstellt neues Genre in der Datenbank*/
             db.incr('genreID', function(err, id){
@@ -71,7 +71,7 @@ router.put('/:id', function(req,res){
            var updatedGenre = req.body;
            updatedGenre.id = id;
            db.set('genre:' + updatedGenre.id , JSON.stringify(updatedGenre),function(err,rep){
-               res.json(updatedGenre);
+               res.status(200).json(updatedGenre);
            });
        }
         else res.status(404).type('plain').send('Das Genre mit der ID ' + req.params.id + ' ist nicht vorhanden.');
@@ -83,7 +83,7 @@ router.put('/:id', function(req,res){
 router.get('/:id', function(req, res){
    db.get('genre:'+req.params.id, function(err,rep){
        if(rep){
-           res.type('json').send(rep);
+           res.status(200).type('json').send(rep);
        }
        else{
            res.status(404).type('plain').send('Das Genre mit der ID: ' + req.params.id +' ist nicht vorhanden.');

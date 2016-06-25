@@ -28,7 +28,7 @@ router.post('/', function(req, res){
 
 
             if(gesetzt){
-                return res.status(401).json({message : "Artist bereits vorhanden."});
+                return res.status(409).json({message : "Artist bereits vorhanden."});
             }
             /*Erstellt neuen Artist in der Datenbank*/
             db.incr('artistIDs', function(err, id){
@@ -71,7 +71,7 @@ router.put('/:id', function(req,res){
            var updatedArtist = req.body;
            updatedArtist.id = id;
            db.set('artist:' + updatedArtist.id , JSON.stringify(updatedArtist),function(err,rep){
-               res.json(updatedArtist);
+               res.status(200).json(updatedArtist);
            });
        }
         else res.status(404).type('plain').send('Der Artist mit der ID ' + req.params.id + ' ist nicht vorhanden.');
@@ -83,7 +83,7 @@ router.put('/:id', function(req,res){
 router.get('/:id', function(req, res){
    db.get('artist:'+req.params.id, function(err,rep){
        if(rep){
-           res.type('json').send(rep);
+           res.status(200).type('json').send(rep);
        }
        else{
            res.status(404).type('plain').send('Der Artist mit der ID: ' + req.params.id +' ist nicht vorhanden.');

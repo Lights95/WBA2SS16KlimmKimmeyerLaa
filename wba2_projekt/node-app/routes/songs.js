@@ -30,7 +30,7 @@ router.post('/', function(req, res){
 
 
             if(gesetzt){
-                return res.status(401).json({message : "Song bereits vorhanden."});
+                return res.status(406).json({message : "Song bereits vorhanden."});
             }
             /*Erstellt neuen User in der Datenbank*/
             db.incr('songIDs', function(err, id){

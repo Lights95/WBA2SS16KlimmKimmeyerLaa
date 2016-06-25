@@ -29,7 +29,7 @@ router.post('/', function(req, res){
 
 
             if(gesetzt){
-                return res.status(401).json({message : "Username bereits vergeben."});
+                return res.status(406).json({message : "Username bereits vergeben."});
             }
             /*Erstellt neuen User in der Datenbank*/
             db.incr('userIDs', function(err, id){
