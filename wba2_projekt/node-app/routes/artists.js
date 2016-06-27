@@ -8,23 +8,27 @@ var ajv = Ajv({allErrors: true});
 /*Schema Artist*/
 var artistSchema={
     'properties': {
-        'id': {
-            'type': 'number',
-            'maxProperties': 1
-        },
         'name':{
             'type': 'string',
             'maxProperties': 3
         },
-        'genres': {'type': 'number'}
+        'genres':{
+            'items':[
+                {'type': 'number'},
+                {'maxItems': 3},
+                {'uniqueItems': true}
+            ]
+        }
     },
-    'required': ['id', 'name', 'genres']
+    'required': ['name', 'genres']
 };
 
 var validate = ajv.compile(artistSchema);
 
 /*Artists*/
 router.post('/', function(req, res){
+    var valid = validate(req.body);
+    if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
     /*Filtert alle Artists*/
     db.keys('artist:*', function(err, keys){
         /*Gibt alle Artists aus der DB zurück*/
@@ -53,7 +57,6 @@ router.post('/', function(req, res){
             /*Erstellt neuen Artist in der Datenbank*/
             db.incr('artistIDs', function(err, id){
                 var artist = req.body;
-                artist.genre=[];
                 artist.id=id;
                 db.set('artist:' + artist.id, JSON.stringify(artist), function(err, newArtist){
                     /*neuer Artist wird als JSON Objekt zurückgegeben*/

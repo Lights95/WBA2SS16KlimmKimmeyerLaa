@@ -23,6 +23,8 @@ var validate = ajv.compile(genreSchema);
 
 /*Genres*/
 router.post('/', function(req, res){
+    var valid = validate(req.body);
+    if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
     /*Filtert alle Genres*/
     db.keys('genre:*', function(err, keys){
         /*Gibt alle Genres aus der DB zurück*/

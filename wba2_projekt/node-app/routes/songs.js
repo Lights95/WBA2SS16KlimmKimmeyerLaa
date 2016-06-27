@@ -39,6 +39,8 @@ var validate = ajv.compile(songSchema);
 
 //Song erstellen
 router.post('/', function(req, res){
+    var valid = validate(req.body);
+    if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
     /*Filtert alle Songs*/
     db.keys('song:*', function(err, keys){
         /*Gibt alle Songs aus der DB zurück*/

@@ -28,6 +28,8 @@ var userSchema={
 
 /*User anlegen*/
 router.post('/', function(req, res){
+    var valid = validate(req.body);
+    if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
     /*Filtert alle User*/
     db.keys('user:*', function(err, keys){
         /*Gibt alle User aus der DB zurück*/

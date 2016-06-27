@@ -10,7 +10,7 @@
 |       /songs/{:id}      |   GET   |  Gibt Infos über die ID bestimmten Song an |  application/json  |  application/json  |
 |                         |  DELETE |           Löscht bestimmten Song           |     text/plain     |     text/plain     |
 |                         |   PUT   |             Ändern eines Songs             |  application/json  |  application/json  |
-|          /genre         |   GET   |             Liste, aller Genres            |     text/plain     |  application/json  |
+|          /genres        |   GET   |             Liste, aller Genres            |     text/plain     |  application/json  |
 |                         |   POST  |            Erstellt neues Genre            |  application/json  |  application/json  |
 |                         |  DELETE |              Löscht Musikgenre             |     text/plain     |     text/plain     |
 |                         |   PUT   |           Ändern des Musikgenres           |  application/json  |  application/json  |
@@ -25,3 +25,40 @@
 |          /queue         |   GET   |         Zeigt komplette Warteliste         |     text/plain     |  application/json  |
 |                         |   POST  |    Fügt neues Lied der Warteliste hinzu    |  application/json  |  application/json  |
 |                         |  DELETE |       Löscht Lied aus der Warteliste       |     text/plain     |     text/plain     |
+
+
+
+# Doku vom Service - Ressourcen
+Definition der Ressourcen:
+
+Zunächst die logischen Ressourcen überlegt, die notwendig waren zur Gestaltung unseres Programmes:
+
+* songs
+* genres
+* queue
+
+Ergänzung von weiteren sinnvollen Ressourcen:
+
+* artists
+* users
+
+Wir haben überlegt, die Artist Ressource als Attribut in Songs reinzunehmen, damit man aber später mehr Möglichkeiten hat, haben wir es als einzelne Ressource angelegt. Nutzersystem wird klein gehalten, aber vorhanden, damit nicht jeder mit dem System Mist machen kann. 
+
+* Keine Löschung mehr einer kompletten Ressource....
+* keine Löschung einzelner ID in Queue für normalnutzer
+* einzelne Ressourcen rausgenommen
+* Delete: Löschoperationen
+* Get: Ausgabe
+* Put, etc. : logisch
+
+Anwendungslogik: User kann nur Songs ausgeben, die zum jeweiligen Partygenre passen
+
+am Anfang nichts anderes passendes gefunden, erstmal so implementiert und dann kam uns die idee blablalbla und haben wir dann umgesetzt
+
+Funktionalität aus Zeitmangel: Nutzersystem, Kleinigkeiten...
+
+
+Begriffe benutzen : Datenmodellierung, synchrone Interaktion, asynchrone Interaktion
+
+mehr Zusammenarbeit am gleichen Projekt
+
