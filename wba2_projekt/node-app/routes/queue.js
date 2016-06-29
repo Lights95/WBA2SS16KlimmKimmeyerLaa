@@ -4,6 +4,16 @@ var router = express.Router();
 var db = redis.createClient();
 
 /*Queue*/
+var queueSchema={
+    'properties': {
+        'id': {
+            'type': 'number',
+            'maxProperties': 1
+        }
+    },
+    'required': ['id']
+};
+
 //neues Lied an der Queue anhängen
 router.post('/', function(req, res){
     /*Filtert alle Songs*/
@@ -37,7 +47,7 @@ router.post('/', function(req, res){
             return res.status(403).json({message: 'Genre dieses Songs passt nicht zur Party.'});
         }
 
-        /*Überprüft, ob der neue Nutzername vorhanden ist*/
+        /*Überprüft, ob der neue Song vorhanden ist*/
         songs.forEach(function(song){
             if(song.title === req.body.title) {
                 inQueue=true;
@@ -50,11 +60,11 @@ router.post('/', function(req, res){
 
         /*Erstellt neuen User in der Datenbank*/
         db.incr('queueNumber', function(err, queueNumber){
-            var song = req.body;
+            var songID = req.body;
             song.queueNumber=queueNumber;
-            db.rpush('queue', JSON.stringify(song), function(err, newOrder){
+            db.rpush('queue', JSON.stringify(songID), function(err, newOrder){
                 /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/
-                 res.status(201).json(song);
+                 res.status(201).json(songID);
             });
         });
     });
