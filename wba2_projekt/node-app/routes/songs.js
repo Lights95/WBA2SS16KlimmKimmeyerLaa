@@ -15,7 +15,7 @@ var songSchema={
         },
         'name':{
             'type': 'string',
-            'maxProperties': 3
+            'maxProperties': 1
         },
         'artist': {
             'type': 'integer',
