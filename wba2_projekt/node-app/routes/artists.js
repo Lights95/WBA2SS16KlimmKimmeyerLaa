@@ -28,7 +28,7 @@ var artistSchema={
             ]
         }
     },
-    'required': ['name', 'genre']
+    'required': ['name']
 };
 
 // Variable zur Überprüfung der Schemas
