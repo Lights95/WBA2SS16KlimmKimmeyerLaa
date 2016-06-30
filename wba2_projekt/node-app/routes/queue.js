@@ -38,61 +38,26 @@ router.post('/', function(req, res){
     var queueEntry = {};
     var valid = validate(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
-    
+    console.log(req.body.id)
     db.get('song:' + req.body.id, function(err, ren){
-        queueEntry.name= JSON.parse(ren).name;
-        queueEntry.artist = JSON.parse(ren).artist;
-        queueEntry.genre = JSON.parse(ren).genre;
+            queueEntry.title   = JSON.parse(ren).title;
+            queueEntry.artist = JSON.parse(ren).artist;
+            queueEntry.genre  = JSON.parse(ren).genre;
+            queueEntry.id = req.body.id;
     });
     
     
-    db.keys('allowedGenres:*', function(err, keys){
-        if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
-        db.mget(keys, function(err, genres){
-            if(genres===undefined) genres=[];
-                genres=genres.map(function(genre){
-                    return JSON.parse(genre);
-                });
-            genres.forEach(function(genre){
-                if((queueEntry.genre !== genre.allowedGenres) || (queueEntry.genre===undefined)){
-                    unAllowed=true;
-                }
-            });
-        });
-    });
     
-    if(unAllowed){
-            return res.status(403).json({message: 'Genre dieses Songs passt nicht zur Party.'});
-    }
+    /*Erstellt neuen Warteschlangeneintrag in der Datenbank*/
+    db.incr('queueNumber', function(err, id){
+        queueEntry.queueNumber=id;
+        db.rpush('queue', JSON.stringify(queueEntry), function(err, newOrder){
+            console.log(JSON.stringify(queueEntry));
+            /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/
+            return res.status(201).json(queueEntry);
+        });
     
-
-    db.lrange('queue',0,100, function(err,songs){
-        if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
-
-        songs=songs.map(function(song){
-            return JSON.parse(song);
-        });
-
-        /*Überprüft, ob der neue Song vorhanden ist*/
-        songs.forEach(function(song){
-            if(song.id === req.body.id) {
-                inQueue=true;
-            }
-        });
-        
-        if(inQueue){
-            return res.status(406).json({message : 'Der Song ist schon in der Queue.'});
-        }
-
-        /*Erstellt neuen Warteschlangeneintrag in der Datenbank*/
-        db.incr('queueNumber', function(err, queueNumber){
-            queueEntry.queueNumber=queueNumber;
-            db.rpush('queue', JSON.stringify(queueEntry), function(err, newOrder){
-                /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/
-                 return res.status(201).json(queueEntry);
-            });
-        });
-    });
+    });    
 });
 
 //Warteschlange ausgeben
@@ -106,7 +71,7 @@ router.get('/', function(req, res){
             res.status(200).json(songs);
         }
     });
-});
+    });
 
 //gehörten Song entfernen
 router.delete('/', function(req, res){
@@ -182,3 +147,45 @@ router.delete('/allowedGenres/:id' , function(req,res){
 //Zufällige Fortführung fehlt noch
 
 module.exports = router;
+
+
+/*
+db.keys('allowedGenres:*', function(err, keys){
+        if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
+        db.mget(keys, function(err, genres){
+            if(genres===undefined) genres=[];
+                genres=genres.map(function(genre){
+                    return JSON.parse(genre);
+                });
+            genres.forEach(function(genre){
+                if((queueEntry.genre !== genre.allowedGenres) || (queueEntry.genre===undefined)){
+                    unAllowed=true;
+                }
+            });
+        });
+    });
+    
+    if(unAllowed){
+            return res.status(403).json({message: 'Genre dieses Songs passt nicht zur Party.'});
+    }
+    
+    
+     db.lrange('queue',0,100, function(err,songs){
+        if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
+
+        songs=songs.map(function(song){
+            return JSON.parse(song);
+        });
+
+        /*Überprüft, ob der neue Song vorhanden ist
+        songs.forEach(function(song){
+            if(song.id === req.body.id) {
+                inQueue=true;
+            }
+        });
+        
+        if(inQueue){
+            return res.status(406).json({message : 'Der Song ist schon in der Queue.'});
+        }
+    });
+*/
