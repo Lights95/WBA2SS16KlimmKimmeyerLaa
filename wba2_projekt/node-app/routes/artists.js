@@ -28,7 +28,7 @@ var artistSchema={
             ]
         }
     },
-    'required': ['name']
+    'required': ['name', 'genre']
 };
 
 // Variable zur Überprüfung der Schemas
@@ -70,22 +70,19 @@ router.post('/', function(req, res){
                 return res.status(409).json({message : "Artist bereits vorhanden."});
             }
 
-
-
-            /*Erstellt neuen Artist in der Datenbank:
-            1.) ID wird automatisch generiert und bei jedem Eintrag inkrementiert
-            2.) Nach der ID des Genres wird in den Genres gesucht, wenn nichts gefunden wird, wird das Genre in Zukunft neu erstellt
-            3.) Datenbankeintrag wird erstellt */
-            db.incr('artistIDs', function(err, id){
-                var artist = {};
-                artist.id=id;
-                artist.name=req.body.name;
+            var artist = {};
+            artist.name=req.body.name;
                 db.get('genre:' +req.body.genre, function(err, ren){
                     if(ren){
                         artist.genre= JSON.parse(ren).name;
                     }
                 });
-
+            /*Erstellt neuen Artist in der Datenbank:
+            1.) ID wird automatisch generiert und bei jedem Eintrag inkrementiert
+            2.) Nach der ID des Genres wird in den Genres gesucht, wenn nichts gefunden wird, wird das Genre in Zukunft neu erstellt
+            3.) Datenbankeintrag wird erstellt */
+            db.incr('artistIDs', function(err, id){
+                artist.id=id;
                 db.set('artist:' + artist.id, JSON.stringify(artist), function(err, newArtist){
                     /*neuer Artist wird als JSON Objekt zurückgegeben*/
                     res.status(201).json(artist);
