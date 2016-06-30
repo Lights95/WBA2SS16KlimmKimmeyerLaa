@@ -40,6 +40,10 @@ io.on('connection', function(socket){
     sendArtists(socket);
   });
 
+  socket.on('getAllowedGenre', function(){
+    sendAllowedGenre(socket);
+  });
+
   /*Verarbeite Daten*/
   socket.on('postQueue', function(data){
     postQueue(socket, data);
@@ -54,8 +58,11 @@ io.on('connection', function(socket){
   });
 
   socket.on('postSong', function(data){
-    console.log(data);
     postSong(socket, data);
+  });
+
+  socket.on('putAllowedGenre', function(data){
+    putAllowedGenre(socket, data);
   });
 
 
@@ -151,6 +158,27 @@ function sendArtists(socket) {
     externalResponse.on('data', function(chunk){
       var songdata = JSON.parse(chunk);
       socket.emit("resArtists",songdata);
+    });
+  });
+  externalRequest.end();
+}
+
+function sendAllowedGenre(socket) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/allowedGenre',
+      method: 'GET',
+      headers: {
+        accept: 'application/json'
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.on('data', function(chunk){
+      var genredata = JSON.parse(chunk);
+      socket.emit("resAllowedGenre", genredata);
     });
   });
   externalRequest.end();
@@ -291,6 +319,42 @@ function postSong(socket, data) {
     });
   });
   externalRequest.write('{"title": "'+data.title+'", "artist": '+data.artistID+', "genre": '+data.genreID+' }');
+  externalRequest.end();
+}
+
+
+
+function putAllowedGenre(socket, data) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/allowedGenre',
+      method: 'PUT',
+      headers: {
+        "content-type": "application/json",
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.setEncoding('utf8');
+    if (externalResponse.statusCode == 201) {
+      externalResponse.on('data', function(chunk){
+        var chunkdata = JSON.parse(chunk);
+        sendMeldung(socket, "Genre geändert");
+
+        /*jedem Client die neue Queue senden*/
+        clientSockets.forEach(function(clientSocket) {
+          sendAllowedGenre(clientSocket);
+        });
+      });
+    }
+    else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
+    externalResponse.on('error', function(e) {
+      sendMeldung(socket, "Error: "+e);
+    });
+  });
+  externalRequest.write('{"genre": '+data);
   externalRequest.end();
 }
 

@@ -86,7 +86,7 @@
         <section class="section--footer mdl-color--white mdl-grid">
           <div class="section__text mdl-cell mdl-cell--4-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
             <h5><span id="songsInQueue">0</span> Songs in der Warteliste</h5>
-            <p>Gespielte Genres: House</p>
+            <p>Gespielte Genre: <label id="allowedGenre">Alle</label></p>
           </div>
           <div class="section__text mdl-cell mdl-cell--4-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
             <h5><span id="songsInDB">0</span> Songs verfügbar</h5>
@@ -232,7 +232,7 @@
         				</form>
         			</div>
         			<div class="mdl-card__actions mdl-card--border">
-        				<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Speichern</button>
+        				<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="saveConfig()">Speichern</button>
         			</div>
         		</div>
 
