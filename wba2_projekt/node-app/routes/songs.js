@@ -17,11 +17,11 @@ var songSchema={
         },
         'artist': {
             'type': 'integer',
-            'maxProperties': 3
+            'maxProperties': 1
         },
         'genre' : {
             'type': 'integer',
-            'maxProperties': 2
+            'maxProperties': 1
         }
     },
     'required': ['title', 'artist', 'genre']
