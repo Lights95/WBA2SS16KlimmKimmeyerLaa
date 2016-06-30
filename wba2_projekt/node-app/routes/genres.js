@@ -1,4 +1,4 @@
-//Einbindung der Module 
+//Einbindung der Module
 var express = require('express');
 var Ajv = require('ajv');
 var redis = require('redis');
@@ -26,7 +26,7 @@ router.post('/', function(req, res){
     //Validierung des Datentyps
     var valid = validate(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
-    
+
     /*Filtert alle Genres*/
     db.keys('genre:*', function(err, keys){
         /*Gibt alle Genres aus der DB zurück*/
@@ -125,6 +125,6 @@ router.delete('/:id', function(req, res){
     });
 });
 
-//Query- Requests fehlen noch 
+//Query- Requests fehlen noch
 
 module.exports = router;

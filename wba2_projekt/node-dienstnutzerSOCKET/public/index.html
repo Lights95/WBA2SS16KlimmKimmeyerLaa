@@ -164,7 +164,7 @@
         				</form>
         			</div>
         			<div class="mdl-card__actions mdl-card--border">
-        				<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Hinzufügen</button>
+        				<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="addArtist()" >Hinzufügen</button>
         			</div>
         		</div>
 
@@ -181,7 +181,7 @@
         				</form>
         			</div>
         			<div class="mdl-card__actions mdl-card--border">
-        				<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Hinzufügen</button>
+        				<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="addGenre()" >Hinzufügen</button>
         			</div>
         		</div>
 
@@ -195,38 +195,16 @@
         						<input class="mdl-textfield__input" type="text" id="song_title" />
         						<label class="mdl-textfield__label" for="song_title">Titel</label>
         					</div>
-                  <p>
-                    Artisten
-                  </p>
-                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-artist-1">
-                    <input type="checkbox" id="checkbox-new-song-artist-1" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">House</span>
-                  </label>
-                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-artist-2">
-                    <input type="checkbox" id="checkbox-new-song-artist-2" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Genre 2</span>
-                  </label>
-                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-artist-3">
-                    <input type="checkbox" id="checkbox-new-song-artist-3" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Genre 3</span>
+                  <h4>Artist</h4>
+                    <fieldset id="admin-addSong-artist-radios">
+                      Keine Artisten verfügbar
+                    </fieldset>
                   </label>
 
-                  <p>
-                    Genres
-                  </p>
-                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-genre-1">
-                    <input type="checkbox" id="checkbox-new-song-genre-1" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">House</span>
-                  </label>
-                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-genre-2">
-                    <input type="checkbox" id="checkbox-new-song-genre-2" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Genre 2</span>
-                  </label>
-                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-genre-3">
-                    <input type="checkbox" id="checkbox-new-song-genre-3" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Genre 3</span>
-                  </label>
-
+                  <h4>Genre</h4>
+                    <fieldset id="admin-addSong-genre-radios">
+                      Keine Genres verfügbar.
+                    </fieldset>
         				</form>
         			</div>
         			<div class="mdl-card__actions mdl-card--border">
@@ -246,19 +224,10 @@
         						<input class="mdl-textfield__input" type="text" id="passwort" value="lorem"/>
         						<label class="mdl-textfield__label" for="passwort">Passwort</label>
         					</div>
-                  <p>Genres</p>
-                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-config-genre-1">
-                    <input type="checkbox" id="checkbox-config-genre-1" class="mdl-checkbox__input" checked>
-                    <span class="mdl-checkbox__label">House</span>
-                  </label>
-                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-config-genre-2">
-                    <input type="checkbox" id="checkbox-config-genre-2" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Genre 2</span>
-                  </label>
-                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-config-genre-3">
-                    <input type="checkbox" id="checkbox-config-genre-3" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Genre 3</span>
-                  </label>
+                  <h4>Gespieltes Genre</h4>
+                  <div id="admin-options-genre-radios">
+                    Keine Genres verfügbar.
+                  </div>
 
         				</form>
         			</div>
@@ -271,8 +240,10 @@
         			<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
         				<h2 class="mdl-card__title-text">Liste aller Genres</h2>
         			</div>
-        	  	<div class="mdl-card__supporting-text">
+        	  	<div class="mdl-card__supporting-text" >
+                <ul id="admin-genre-list">
 
+                </ul>
         			</div>
         		</div>
 
@@ -280,8 +251,10 @@
         			<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
         				<h2 class="mdl-card__title-text">Liste aller Artisten</h2>
         			</div>
-        	  	<div class="mdl-card__supporting-text">
+        	  	<div class="mdl-card__supporting-text" >
+                <ul id="admin-artist-list">
 
+                </ul>
         			</div>
         		</div>
 
@@ -291,7 +264,9 @@
         				<h2 class="mdl-card__title-text">Liste aller Songs</h2>
         			</div>
         	  	<div class="mdl-card__supporting-text">
-        				
+                <ul id="admin-song-list">
+
+                </ul>
         			</div>
         		</div>
           </section>

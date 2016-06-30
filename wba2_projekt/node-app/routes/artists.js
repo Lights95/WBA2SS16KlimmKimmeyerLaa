@@ -19,7 +19,7 @@ var artistSchema={
             'maxProperties': 1
         },
         /* Genres, welche ein Artist spielt, werden über die ID übergeben, beim Speichern eines neuen Artists wird diese dann aus der Genre- Datenbank geholt oder was noch nicht implementiert wurde, wird es als Genre neu erstellt. */
-        
+
         'genres':{
             'items':[
                 {'type': 'number'},
@@ -28,7 +28,7 @@ var artistSchema={
             ]
         }
     },
-    'required': ['name', 'genre']
+    'required': ['name']
 };
 
 // Variable zur Überprüfung der Schemas
@@ -36,11 +36,11 @@ var validate = ajv.compile(artistSchema);
 
 /*Artists*/
 router.post('/', function(req, res){
-    
+
     //Validierung des JSON- Objekts, welches über den Dienstnutzer gesendet wird. Abbruch bei falschem Schema
     var valid = validate(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
-    
+
     /*Filtert alle Artists*/
     db.keys('artist:*', function(err, keys){
         /*Gibt alle Artists aus der DB zurück*/
@@ -49,12 +49,12 @@ router.post('/', function(req, res){
             if(artists===undefined){
                 artists =[];
             }
-            
+
             /*Gibt neues Array an artists zurück, welches alle Artists enthält*/
             artists=artists.map(function(artist){
                 return JSON.parse(artist);
             });
-            
+
             //Variable zur Überprüfung, ob der neue Artist vorhanden ist.
             var gesetzt= false;
 
@@ -64,14 +64,14 @@ router.post('/', function(req, res){
                     gesetzt=true;
                 }
             });
-            
+
             //Abbruch, falls Artist vorhanden ist
             if(gesetzt){
                 return res.status(409).json({message : "Artist bereits vorhanden."});
             }
-            
-            
-            
+
+
+
             /*Erstellt neuen Artist in der Datenbank:
             1.) ID wird automatisch generiert und bei jedem Eintrag inkrementiert
             2.) Nach der ID des Genres wird in den Genres gesucht, wenn nichts gefunden wird, wird das Genre in Zukunft neu erstellt
@@ -85,7 +85,7 @@ router.post('/', function(req, res){
                         artist.genre= JSON.parse(ren).name;
                     }
                 });
-                
+
                 db.set('artist:' + artist.id, JSON.stringify(artist), function(err, newArtist){
                     /*neuer Artist wird als JSON Objekt zurückgegeben*/
                     res.status(201).json(artist);
@@ -156,6 +156,6 @@ router.delete('/:id', function(req, res){
 });
 
 
-// Query- Request für Artist fehlt 
+// Query- Request für Artist fehlt
 
 module.exports = router;

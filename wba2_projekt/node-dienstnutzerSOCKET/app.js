@@ -32,12 +32,27 @@ io.on('connection', function(socket){
     sendSongs(socket);
   });
 
+  socket.on('getGenres', function(){
+    sendGenres(socket);
+  });
+
+  socket.on('getArtists', function(){
+    sendArtists(socket);
+  });
+
   /*Verarbeite Daten*/
   socket.on('postQueue', function(data){
     postQueue(socket, data);
-    //sendMeldung(socket, "Test");
-    //sendQueue(socket);
   });
+
+  socket.on('postGenre', function(data){
+    postGenre(socket, data);
+  });
+
+  socket.on('postArtist', function(data){
+    postArtist(socket, data);
+  });
+
 
 
   /* ClientSocket bei Verbindungsabbruch aus der Socket-Liste entfernen */
@@ -73,6 +88,27 @@ function sendQueue(socket) {
   externalRequest.end();
 }
 
+function sendGenres(socket) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/genres',
+      method: 'GET',
+      headers: {
+        accept: 'application/json'
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.on('data', function(chunk){
+      var genredata = JSON.parse(chunk);
+      socket.emit("resGenres", genredata);
+    });
+  });
+  externalRequest.end();
+}
+
 function sendSongs(socket) {
   var options = {
       host: 'localhost',
@@ -94,6 +130,29 @@ function sendSongs(socket) {
   externalRequest.end();
 }
 
+function sendArtists(socket) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/artists',
+      method: 'GET',
+      headers: {
+        accept: 'application/json'
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.on('data', function(chunk){
+      var songdata = JSON.parse(chunk);
+      socket.emit("resArtists",songdata);
+    });
+  });
+  externalRequest.end();
+}
+
+
+
 function postQueue(socket, data) {
   var options = {
       host: 'localhost',
@@ -101,7 +160,7 @@ function postQueue(socket, data) {
       path: '/api/queue',
       method: 'POST',
       headers: {
-        accept: 'application/json'
+        "content-type": "application/json"
       }
   };
 
@@ -122,7 +181,75 @@ function postQueue(socket, data) {
       sendMeldung(socket, "Error: "+e);
     });
   });
-  externalRequest.write('{"id": "XX"}');
+  externalRequest.write('{"id": '+data+'}');
+  externalRequest.end();
+}
+
+function postGenre(socket, data) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/genres',
+      method: 'POST',
+      headers: {
+        "content-type": "application/json",
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.setEncoding('utf8');
+    if (externalResponse.statusCode == 201) {
+      externalResponse.on('data', function(chunk){
+        var chunkdata = JSON.parse(chunk);
+        sendMeldung(socket, "Genre hinzugefügt");
+
+        /*jedem Client die neue Queue senden*/
+        clientSockets.forEach(function(clientSocket) {
+          sendGenres(clientSocket);
+        });
+      });
+    }
+    else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
+    externalResponse.on('error', function(e) {
+      sendMeldung(socket, "Error: "+e);
+    });
+  });
+  externalRequest.write('{"name": "'+data+'"}');
+  externalRequest.end();
+}
+
+function postArtist(socket, data) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/artists',
+      method: 'POST',
+      headers: {
+        "content-type": "application/json",
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.setEncoding('utf8');
+    if (externalResponse.statusCode == 201) {
+      externalResponse.on('data', function(chunk){
+        var chunkdata = JSON.parse(chunk);
+        sendMeldung(socket, "Artist hinzugefügt");
+
+        /*jedem Client die neue Queue senden*/
+        clientSockets.forEach(function(clientSocket) {
+          sendArtists(clientSocket);
+        });
+      });
+    }
+    else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
+    externalResponse.on('error', function(e) {
+      sendMeldung(socket, "Error: "+e);
+    });
+  });
+  externalRequest.write('{"name": "'+data+'"}');
   externalRequest.end();
 }
 
