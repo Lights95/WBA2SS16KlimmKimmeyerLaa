@@ -45,6 +45,19 @@
     #songsInQueue, #songsInDB {
       color: rgb(255, 64, 129);
     }
+
+    .mdl-layout__tab-panel {
+      min-height: 500px
+    }
+
+    .mdl-mini-foote {
+      margin-top: 40px
+    }
+
+    .mdl-checkbox {
+      width: 100px
+    }
+
     </style>
   </head>
   <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
@@ -60,10 +73,11 @@
         <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--primary-dark">
           <a href="#queue" class="mdl-layout__tab is-active">Warteliste</a>
           <a href="#songs" class="mdl-layout__tab">Songs</a>
-          <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--accent" id="search">
+          <a href="#admin" class="mdl-layout__tab">Admin</a>
+          <!--<button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--accent" id="search">
             <i class="material-icons" role="presentation">search</i>
             <span class="visuallyhidden">Suche</span>
-          </button>
+          </button>-->
         </div>
       </header>
 
@@ -126,9 +140,166 @@
           <!--</section>-->
         </div>
 
+        <div class="mdl-layout__tab-panel" id="admin">
+          <section class="section--center mdl-grid" style="text-align: center;">
+            <!--<form action="#">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="password" id="password">
+                <label class="mdl-textfield__label" for="sample3">Bitte Passwort eingeben (default: lorem)...</label>
+              </div>
+              <a href="#" class="mdl-button mdl-button--colored mdl-js-ripple-effect">
+                Einloggen
+              </a>
+            </form>-->
+            <div class="mdl-card mdl-cell mdl-cell--6-col mdl-shadow--6dp">
+        			<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+        				<h2 class="mdl-card__title-text">Neuer Artist</h2>
+        			</div>
+        	  	<div class="mdl-card__supporting-text">
+        				<form action="#">
+        					<div class="mdl-textfield mdl-js-textfield">
+        						<input class="mdl-textfield__input" type="text" id="artist_name" />
+        						<label class="mdl-textfield__label" for="artist_name">Name</label>
+        					</div>
+        				</form>
+        			</div>
+        			<div class="mdl-card__actions mdl-card--border">
+        				<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Hinzufügen</button>
+        			</div>
+        		</div>
+
+            <div class="mdl-card mdl-cell mdl-cell--6-col mdl-shadow--6dp">
+        			<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+        				<h2 class="mdl-card__title-text">Neues Genre</h2>
+        			</div>
+        	  	<div class="mdl-card__supporting-text">
+        				<form action="#">
+        					<div class="mdl-textfield mdl-js-textfield">
+        						<input class="mdl-textfield__input" type="text" id="genre_bezeichnung" />
+        						<label class="mdl-textfield__label" for="genre_beueichnung">Bezeichnung</label>
+        					</div>
+        				</form>
+        			</div>
+        			<div class="mdl-card__actions mdl-card--border">
+        				<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Hinzufügen</button>
+        			</div>
+        		</div>
+
+            <div class="mdl-card mdl-cell mdl-cell--6-col mdl-shadow--6dp">
+        			<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+        				<h2 class="mdl-card__title-text">Neuer Song</h2>
+        			</div>
+        	  	<div class="mdl-card__supporting-text">
+        				<form action="#">
+        					<div class="mdl-textfield mdl-js-textfield">
+        						<input class="mdl-textfield__input" type="text" id="song_title" />
+        						<label class="mdl-textfield__label" for="song_title">Titel</label>
+        					</div>
+                  <p>
+                    Artisten
+                  </p>
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-artist-1">
+                    <input type="checkbox" id="checkbox-new-song-artist-1" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">House</span>
+                  </label>
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-artist-2">
+                    <input type="checkbox" id="checkbox-new-song-artist-2" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Genre 2</span>
+                  </label>
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-artist-3">
+                    <input type="checkbox" id="checkbox-new-song-artist-3" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Genre 3</span>
+                  </label>
+
+                  <p>
+                    Genres
+                  </p>
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-genre-1">
+                    <input type="checkbox" id="checkbox-new-song-genre-1" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">House</span>
+                  </label>
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-genre-2">
+                    <input type="checkbox" id="checkbox-new-song-genre-2" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Genre 2</span>
+                  </label>
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-new-song-genre-3">
+                    <input type="checkbox" id="checkbox-new-song-genre-3" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Genre 3</span>
+                  </label>
+
+        				</form>
+        			</div>
+        			<div class="mdl-card__actions mdl-card--border">
+        				<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Hinzufügen</button>
+        			</div>
+        		</div>
+
+            <div class="mdl-card mdl-cell mdl-cell--6-col mdl-shadow--6dp">
+        			<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+        				<h2 class="mdl-card__title-text">Einstellungen</h2>
+        			</div>
+        	  	<div class="mdl-card__supporting-text">
+        				<form action="#">
+                  <p>Passwort</p>
+        					<div class="mdl-textfield mdl-js-textfield">
+
+        						<input class="mdl-textfield__input" type="text" id="passwort" value="lorem"/>
+        						<label class="mdl-textfield__label" for="passwort">Passwort</label>
+        					</div>
+                  <p>Genres</p>
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-config-genre-1">
+                    <input type="checkbox" id="checkbox-config-genre-1" class="mdl-checkbox__input" checked>
+                    <span class="mdl-checkbox__label">House</span>
+                  </label>
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-config-genre-2">
+                    <input type="checkbox" id="checkbox-config-genre-2" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Genre 2</span>
+                  </label>
+                  <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-config-genre-3">
+                    <input type="checkbox" id="checkbox-config-genre-3" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Genre 3</span>
+                  </label>
+
+        				</form>
+        			</div>
+        			<div class="mdl-card__actions mdl-card--border">
+        				<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Speichern</button>
+        			</div>
+        		</div>
+
+            <div class="mdl-card mdl-cell mdl-cell--4-col mdl-shadow--6dp">
+        			<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+        				<h2 class="mdl-card__title-text">Liste aller Genres</h2>
+        			</div>
+        	  	<div class="mdl-card__supporting-text">
+
+        			</div>
+        		</div>
+
+            <div class="mdl-card mdl-cell mdl-cell--4-col mdl-shadow--6dp">
+        			<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+        				<h2 class="mdl-card__title-text">Liste aller Artisten</h2>
+        			</div>
+        	  	<div class="mdl-card__supporting-text">
+
+        			</div>
+        		</div>
+
+
+            <div class="mdl-card mdl-cell mdl-cell--4-col mdl-shadow--6dp">
+        			<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+        				<h2 class="mdl-card__title-text">Liste aller Songs</h2>
+        			</div>
+        	  	<div class="mdl-card__supporting-text">
+        				
+        			</div>
+        		</div>
+          </section>
+        </div>
+
         <footer class="mdl-mini-footer">
           <div class="mdl-mini-footer--left-section">
-            &copy; 2016 - Marvin Klimm, Johannes Kimmeyer &amp; Lena Laaser
+            &copy; 2016 - Marvin Klimm &amp; Johannes Kimmeyer
           </div>
           <div class="mdl-mini-footer--right-section">
           </div>
@@ -142,97 +313,7 @@
     </div>
     <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
     <script src="/socket.io/socket.io.js" charset="utf-8"></script>
-    <script type="text/javascript">
-
-      /*Connecting mit DienstnutzerAPI*/
-      var socket = io.connect('http://localhost:8080');
-
-      /*Anfordern der Daten*/
-      socket.emit("getQueue");
-      socket.emit("getSongs");
-
-      /*Bei empfangen der Daten*/
-      socket.on('resQueue', function(queue){
-        document.getElementById("songsInQueue").innerHTML = queue.length
-        displayQueue(queue);
-      });
-
-      socket.on('resSongs', function(songs){
-        document.getElementById("songsInDB").innerHTML = songs.length;
-        displaySongs(songs);
-      });
-
-      /*Sobald eine Meldung eingeht*/
-      socket.on('resMeldung', function(msg){
-        meldung(msg);
-      });
-
-      function displayQueue(data) {
-        if (data.length == 0) document.getElementById("queue").innerHTML = '<section class="section--center" style="text-align: center;"><p>Zur Zeit keine Songs in der Warteliste!</p></section>';
-        else {
-          document.getElementById("queue").innerHTML = "";
-          for (var i = 0; i < data.length; i++) {
-            var note;
-            if(i === 0) note = '(next Song!)';
-            else note = '';
-            var newQueueObject = document.createElement("section");
-            newQueueObject.className = "section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp";
-            newQueueObject.innerHTML =
-            '<header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">' +
-              '<i class="material-icons">play_circle_filled</i>'+
-            '</header>'+
-            '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
-              '<div class="mdl-card__supporting-text">'+
-                '<h4>#'+data[i].queueNumber+' '+data[i].title+' '+note+'</h4>'+
-                'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
-              '</div>'+
-            '</div>';
-            document.getElementById("queue").appendChild(newQueueObject);
-          }
-        }
-      }
-
-
-      function displaySongs(data) {
-        if (data.length == 0) document.getElementById("songs").innerHTML = '<section class="section--center" style="text-align: center;"><p>Zur Zeit keine Songs in der Warteliste!</p></section>';
-        else {
-          document.getElementById("songs").innerHTML = "";
-          for (var i = 0; i < data.length; i++) {
-            var newSonglistObject = document.createElement("section");
-            newSonglistObject.className = "section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp";
-            newSonglistObject.innerHTML =
-            '<header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">' +
-              '<i class="material-icons">play_circle_filled</i>'+
-            '</header>'+
-            '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
-              '<div class="mdl-card__supporting-text">'+
-                '<h4>#'+(i+1)+' '+data[i].title+'</h4>'+
-                'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
-              '</div>'+
-              '<div class="mdl-card__actions">'+
-                '<a href="#" class="mdl-button" onclick="addToQueue('+data[i].id+');">Zur Warteliste hinzufügen</a>'+
-              '</div>'+
-            '</div>';
-
-            document.getElementById("songs").appendChild(newSonglistObject);
-          }
-        }
-      }
-      function addToQueue(id) {
-        socket.emit("postQueue", id);
-      }
-
-      /*Um Meldungen zu machen*/
-      function meldung(msg) {
-        (function() {
-          'use strict';
-          window['counter'] = 0;
-          var snackbarContainer = document.querySelector('#demo-toast-example');
-            'use strict';
-            var data = {message: msg};
-            snackbarContainer.MaterialSnackbar.showSnackbar(data);
-        }());
-      }
-    </script>
+    <script src="functions.js" charset="utf-8"></script>
+    <script src="login.js" charset="utf-8"></script>
   </body>
 </html>
