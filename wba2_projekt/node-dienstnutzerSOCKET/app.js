@@ -165,23 +165,25 @@ function postQueue(socket, data) {
       path: '/api/queue',
       method: 'POST',
       headers: {
-        "content-type": "application/json"
+        "content-type": "application/json",
       }
   };
 
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
     externalResponse.setEncoding('utf8');
-    externalResponse.on('data', function(chunk){
-      var queuedata = JSON.parse(chunk);
-      sendMeldung(socket, "Song hinzugefügt!");
+    if (externalResponse.statusCode == 201) {
+      externalResponse.on('data', function(chunk){
+        var chunkdata = JSON.parse(chunk);
+        sendMeldung(socket, "Zur Warteliste hinzugefügt");
 
-      /*jedem Client die neue Queue senden*/
-      clientSockets.forEach(function(clientSocket) {
-        sendQueue(clientSocket);
+        /*jedem Client die neue Queue senden*/
+        clientSockets.forEach(function(clientSocket) {
+          sendQueue(clientSocket);
+        });
       });
-
-    });
+    }
+    else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);
     });
