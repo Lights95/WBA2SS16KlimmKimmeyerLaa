@@ -1,3 +1,5 @@
+//Einbindung der Module
+
 var express = require('express');
 var redis = require('redis');
 var Ajv = require('ajv');
@@ -9,11 +11,7 @@ var ajv = Ajv({allErrors: true});
 /*Songsschema*/
 var songSchema={
     'properties': {
-        'id': {
-            'type': 'integer',
-            'maxProperties': 1
-        },
-        'name':{
+        'title':{
             'type': 'string',
             'maxProperties': 1
         },
@@ -24,23 +22,23 @@ var songSchema={
         'genre' : {
             'type': 'integer',
             'maxProperties': 2
-        },
-        'year': {
-            'type': 'integer',
-            'maxProperties': 1
         }
     },
-    'required': ['id', 'name', 'genre', 'artist']
+    'required': ['title', 'artist', 'genre']
 };
 
+//Validierungsvariable
 var validate = ajv.compile(songSchema);
 
 
 
-//Song erstellen
+/*Song erstellen: evtl. das ganze mit Sets lösen und falls das Genre oder der Artist nicht vorhanden ist, diesen neu Posten.*/
 router.post('/', function(req, res){
+    
+    //Validierung
     var valid = validate(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
+    
     /*Filtert alle Songs*/
     db.keys('song:*', function(err, keys){
         /*Gibt alle Songs aus der DB zurück*/
@@ -55,31 +53,46 @@ router.post('/', function(req, res){
             });
             var gesetzt= false;
 
-            /*Überprüft, ob der neue Songname vorhanden ist*/
+            /*Überprüft, ob der neue Songname schon vorhanden ist*/
             songs.forEach(function(song){
                 if(song.title === req.body.title) {
                     gesetzt=true;
                 }
             });
 
-
             if(gesetzt){
                 return res.status(406).json({message : "Song bereits vorhanden."});
             }
+            
+        
             /*Erstellt neuen User in der Datenbank*/
             db.incr('songIDs', function(err, id){
-                var song = req.body;
-                song.artist=[];
-                song.genre=[];
+                var song={};
                 song.id=id;
+                song.title=req.body.title;
+                
+                db.get('artist:' +req.body.artist, function(err,rep){
+                    if(rep){
+                        song.artist=JSON.parse(rep).name;
+                    }
+                });
+                
+                db.get('genre:' +req.body.genre, function(err, ren){
+                    if(ren){
+                        song.genre= JSON.parse(ren).name;
+                    }
+                });
+                
                 db.set('song:' + song.id, JSON.stringify(song), function(err, newSong){
-                    /*neuer Song wird als JSON Objekt zurückgegeben*/
+                    /*neuer Song wird als JSON Objekt zurückgegeben*/ 
                     res.status(201).json(song);
                 });
             });
         });
     });
 });
+
+
 
 //Alle Songs ausgeben
 router.get('/', function(req, res){
@@ -118,6 +131,7 @@ router.put('/:id', function(req,res){
 router.get('/:id', function(req, res){
    db.get('song:'+req.params.id, function(err,rep){
        if(rep){
+           console.log(rep);
            res.status(200).type('json').send(rep);
        }
        else{

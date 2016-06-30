@@ -1,3 +1,5 @@
+//Einbindung der Module Express, Redis und ajv
+
 var express = require('express');
 var redis = require('redis');
 var router = express.Router();
@@ -5,13 +7,19 @@ var db = redis.createClient();
 var Ajv = require('ajv');
 var ajv = Ajv({allErrors: true});
 
-/*Schema Artist*/
+
+
+/*Schema der einzelnen Datentypen wird am Anfang festgelegt: Schema wird direkt überprüft, da wir von nur korrekten Eingaben in der Datenbank ausgehen */
+
 var artistSchema={
     'properties': {
         'name':{
             'type': 'string',
-            'maxProperties': 3
+            //Zunächst nur 1 Artist, es dürften aber durchaus mehrere sein
+            'maxProperties': 1
         },
+        /* Genres, welche ein Artist spielt, werden über die ID übergeben, beim Speichern eines neuen Artists wird diese dann aus der Genre- Datenbank geholt oder was noch nicht implementiert wurde, wird es als Genre neu erstellt. */
+        
         'genres':{
             'items':[
                 {'type': 'number'},
@@ -20,15 +28,19 @@ var artistSchema={
             ]
         }
     },
-    'required': ['name', 'genres']
+    'required': ['name', 'genre']
 };
 
+// Variable zur Überprüfung der Schemas
 var validate = ajv.compile(artistSchema);
 
 /*Artists*/
 router.post('/', function(req, res){
+    
+    //Validierung des JSON- Objekts, welches über den Dienstnutzer gesendet wird. Abbruch bei falschem Schema
     var valid = validate(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
+    
     /*Filtert alle Artists*/
     db.keys('artist:*', function(err, keys){
         /*Gibt alle Artists aus der DB zurück*/
@@ -37,10 +49,13 @@ router.post('/', function(req, res){
             if(artists===undefined){
                 artists =[];
             }
+            
             /*Gibt neues Array an artists zurück, welches alle Artists enthält*/
             artists=artists.map(function(artist){
                 return JSON.parse(artist);
             });
+            
+            //Variable zur Überprüfung, ob der neue Artist vorhanden ist.
             var gesetzt= false;
 
             /*Überprüft, ob der neue Artist vorhanden ist*/
@@ -49,12 +64,16 @@ router.post('/', function(req, res){
                     gesetzt=true;
                 }
             });
-
-
+            
+            //Abbruch, falls Artist vorhanden ist
             if(gesetzt){
                 return res.status(409).json({message : "Artist bereits vorhanden."});
             }
-            /*Erstellt neuen Artist in der Datenbank*/
+            
+            /*Erstellt neuen Artist in der Datenbank:
+            1.) ID wird automatisch generiert und bei jedem Eintrag inkrementiert
+            2.) Nach der ID des Genres wird in den Genres gesucht, wenn nichts gefunden wird, wird das Genre in Zukunft neu erstellt
+            3.) Datenbankeintrag wird erstellt */
             db.incr('artistIDs', function(err, id){
                 var artist = req.body;
                 artist.id=id;
@@ -126,5 +145,8 @@ router.delete('/:id', function(req, res){
         }
     });
 });
+
+
+// Query- Request für Artist fehlt 
 
 module.exports = router;

@@ -1,3 +1,4 @@
+//Einbindung der Module 
 var express = require('express');
 var Ajv = require('ajv');
 var redis = require('redis');
@@ -5,26 +6,27 @@ var router = express.Router();
 var db = redis.createClient();
 var ajv = Ajv({allErrors: true});
 
+//Datenhaltung von Genre wird definiert
 var genreSchema={
     'properties': {
-        'id': {
-            'type': 'number',
-            'maxProperties': 1
-        },
         'name':{
             'type': 'string',
             'maxProperties': 1
         }
     },
-    'required': ['id', 'name']
+    'required': ['name']
 };
 
+//Validierungsvariable
 var validate = ajv.compile(genreSchema);
 
 /*Genres*/
+
 router.post('/', function(req, res){
+    //Validierung des Datentyps
     var valid = validate(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
+    
     /*Filtert alle Genres*/
     db.keys('genre:*', function(err, keys){
         /*Gibt alle Genres aus der DB zurück*/
@@ -53,7 +55,6 @@ router.post('/', function(req, res){
             /*Erstellt neues Genre in der Datenbank*/
             db.incr('genreID', function(err, id){
                 var genre = req.body;
-                genre.groups=[];
                 genre.id=id;
                 db.set('genre:' + genre.id, JSON.stringify(genre), function(err, newGenre){
                     /*neues Genre wird als JSON Objektzurückgegeben*/
@@ -123,4 +124,7 @@ router.delete('/:id', function(req, res){
         }
     });
 });
+
+//Query- Requests fehlen noch 
+
 module.exports = router;
