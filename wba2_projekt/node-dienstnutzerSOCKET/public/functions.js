@@ -170,6 +170,41 @@
         socket.emit("postGenre", document.getElementById("genre_bezeichnung").value);
       }
 
+      function addSong() {
+        var title = document.getElementById("song_title").value;
+        var artistID, genreID;
+        var radios = document.getElementsByName('options-artist');
+
+        for (var i = 0, length = radios.length; i < length; i++) {
+            if (radios[i].checked) {
+                // do whatever you want with the checked radio
+                artistID = radios[i].value;
+
+                // only one radio can be logically checked, don't check the rest
+                break;
+            }
+        }
+
+        radios = document.getElementsByName('options-genre1');
+
+        for (i = 0, length = radios.length; i < length; i++) {
+            if (radios[i].checked) {
+                // do whatever you want with the checked radio
+                genreID = radios[i].value;
+
+                // only one radio can be logically checked, don't check the rest
+                break;
+            }
+        }
+
+        var data = {};
+        data.title = title;
+        data.artistID = artistID;
+        data.genreID = genreID;
+
+        socket.emit("postSong", data);
+      }
+
       /*Um Meldungen zu machen*/
       function meldung(msg) {
         (function() {

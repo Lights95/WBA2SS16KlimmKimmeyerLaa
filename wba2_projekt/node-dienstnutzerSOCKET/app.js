@@ -53,6 +53,11 @@ io.on('connection', function(socket){
     postArtist(socket, data);
   });
 
+  socket.on('postSong', function(data){
+    console.log(data);
+    postSong(socket, data);
+  });
+
 
 
   /* ClientSocket bei Verbindungsabbruch aus der Socket-Liste entfernen */
@@ -250,6 +255,40 @@ function postArtist(socket, data) {
     });
   });
   externalRequest.write('{"name": "'+data+'"}');
+  externalRequest.end();
+}
+
+function postSong(socket, data) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/songs',
+      method: 'POST',
+      headers: {
+        "content-type": "application/json",
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.setEncoding('utf8');
+    if (externalResponse.statusCode == 201) {
+      externalResponse.on('data', function(chunk){
+        var chunkdata = JSON.parse(chunk);
+        sendMeldung(socket, "Song hinzugefügt");
+
+        /*jedem Client die neue Queue senden*/
+        clientSockets.forEach(function(clientSocket) {
+          sendSongs(clientSocket);
+        });
+      });
+    }
+    else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
+    externalResponse.on('error', function(e) {
+      sendMeldung(socket, "Error: "+e);
+    });
+  });
+  externalRequest.write('{"title": "'+data.title+'", "artist": '+data.artistID+', "genre": '+data.genreID+' }');
   externalRequest.end();
 }
 

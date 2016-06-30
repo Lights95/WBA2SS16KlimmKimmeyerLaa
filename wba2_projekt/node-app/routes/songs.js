@@ -34,11 +34,11 @@ var validate = ajv.compile(songSchema);
 
 /*Song erstellen: evtl. das ganze mit Sets lösen und falls das Genre oder der Artist nicht vorhanden ist, diesen neu Posten.*/
 router.post('/', function(req, res){
-    
+
     //Validierung
     var valid = validate(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
-    
+
     /*Filtert alle Songs*/
     db.keys('song:*', function(err, keys){
         /*Gibt alle Songs aus der DB zurück*/
@@ -63,25 +63,25 @@ router.post('/', function(req, res){
             if(gesetzt){
                 return res.status(406).json({message : "Song bereits vorhanden."});
             }
-            
+
             var song={};
             song.title=req.body.title;
             db.get('artist:' +req.body.artist, function(err,rep){
                 if(rep){
                     song.artist=JSON.parse(rep).name;
                 }
-            });        
+            });
             db.get('genre:' +req.body.genre, function(err, ren){
                 if(ren){
                     song.genre= JSON.parse(ren).name;
                 }
             });
-            
+
             /*Erstellt neuen Song in der Datenbank*/
             db.incr('songIDs', function(err, id){
                 song.id=id;
                 db.set('song:' + song.id, JSON.stringify(song), function(err, newSong){
-                    /*neuer Song wird als JSON Objekt zurückgegeben*/ 
+                    /*neuer Song wird als JSON Objekt zurückgegeben*/
                     console.log(JSON.stringify(song));
                     res.status(201).json(song);
                 });
