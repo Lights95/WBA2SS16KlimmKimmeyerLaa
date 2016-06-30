@@ -33,9 +33,19 @@ var validate2 = ajv.compile(allowedSchema);
 //neues Lied an der Queue anhängen
 router.post('/', function(req, res){
     /*Filtert alle Songs*/
+    var inQueue= false;
     var unAllowed = false;
+    var queueEntry = {};
     var valid = validate(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
+    
+    db.get('song:' + req.body.id, function(err, ren){
+        queueEntry.name= JSON.parse(ren).name;
+        queueEntry.artist = JSON.parse(ren).artist;
+        queueEntry.genre = JSON.parse(ren).genre;
+    });
+    
+    
     db.keys('allowedGenres:*', function(err, keys){
         if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
         db.mget(keys, function(err, genres){
@@ -44,30 +54,28 @@ router.post('/', function(req, res){
                     return JSON.parse(genre);
                 });
             genres.forEach(function(genre){
-                //vorher war !(req.body.genre === genre.allowedGenres)
-                if((req.body.genre !== genre.allowedGenres) || (req.body.genre===undefined)){
+                if((queueEntry.genre !== genre.allowedGenres) || (queueEntry.genre===undefined)){
                     unAllowed=true;
                 }
             });
         });
     });
+    
+    if(unAllowed){
+            return res.status(403).json({message: 'Genre dieses Songs passt nicht zur Party.'});
+    }
+    
 
     db.lrange('queue',0,100, function(err,songs){
         if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
 
-        console.log("test");
         songs=songs.map(function(song){
             return JSON.parse(song);
         });
-        var inQueue= false;
-        
-        if(unAllowed){
-            return res.status(403).json({message: 'Genre dieses Songs passt nicht zur Party.'});
-        }
 
         /*Überprüft, ob der neue Song vorhanden ist*/
         songs.forEach(function(song){
-            if(song.title === req.body.title) {
+            if(song.id === req.body.id) {
                 inQueue=true;
             }
         });
@@ -76,13 +84,12 @@ router.post('/', function(req, res){
             return res.status(406).json({message : 'Der Song ist schon in der Queue.'});
         }
 
-        /*Erstellt neuen User in der Datenbank*/
+        /*Erstellt neuen Warteschlangeneintrag in der Datenbank*/
         db.incr('queueNumber', function(err, queueNumber){
-            var songID = req.body;
-            song.queueNumber=queueNumber;
-            db.rpush('queue', JSON.stringify(songID), function(err, newOrder){
+            queueEntry.queueNumber=queueNumber;
+            db.rpush('queue', JSON.stringify(queueEntry), function(err, newOrder){
                 /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/
-                 res.status(201).json(songID);
+                 return res.status(201).json(queueEntry);
             });
         });
     });
@@ -119,9 +126,15 @@ router.post('/allowedGenres', function(req,res){
     //Validierung
     var valid = validate2(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
+    
     db.incr('allowedGenresID', function(err, id){                                
-        var allowedGenres = req.body;
+        var allowedGenres = {};
         allowedGenres.id=id;
+        
+        db.get('allowedGenres:' + req.body.id , function(err, ren){
+            allowedGenres.name = JSON.parse(ren).name;
+            allowedGenres.id   = req.body.id;
+        });
         db.set('allowedGenres:' + allowedGenres.id, JSON.stringify(allowedGenres),function(err,rep){
             res.status(201).json(allowedGenres);
         });
@@ -132,6 +145,8 @@ router.post('/allowedGenres', function(req,res){
 router.put('/allowedGenres', function(req, res){
     var id = req.body;
 });
+
+/*----------------------tbc-------------------*/
 
 router.get('/allowedGenres', function(req,res){
    db.keys('allowedGenres:*', function(err,keys){

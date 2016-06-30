@@ -64,27 +64,25 @@ router.post('/', function(req, res){
                 return res.status(406).json({message : "Song bereits vorhanden."});
             }
             
-        
-            /*Erstellt neuen User in der Datenbank*/
+            var song={};
+            song.title=req.body.title;
+            db.get('artist:' +req.body.artist, function(err,rep){
+                if(rep){
+                    song.artist=JSON.parse(rep).name;
+                }
+            });        
+            db.get('genre:' +req.body.genre, function(err, ren){
+                if(ren){
+                    song.genre= JSON.parse(ren).name;
+                }
+            });
+            
+            /*Erstellt neuen Song in der Datenbank*/
             db.incr('songIDs', function(err, id){
-                var song={};
                 song.id=id;
-                song.title=req.body.title;
-                
-                db.get('artist:' +req.body.artist, function(err,rep){
-                    if(rep){
-                        song.artist=JSON.parse(rep).name;
-                    }
-                });
-                
-                db.get('genre:' +req.body.genre, function(err, ren){
-                    if(ren){
-                        song.genre= JSON.parse(ren).name;
-                    }
-                });
-                
                 db.set('song:' + song.id, JSON.stringify(song), function(err, newSong){
                     /*neuer Song wird als JSON Objekt zurückgegeben*/ 
+                    console.log(JSON.stringify(song));
                     res.status(201).json(song);
                 });
             });
