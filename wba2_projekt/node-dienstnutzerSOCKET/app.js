@@ -338,7 +338,7 @@ function putAllowedGenres(socket, data) {
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
     externalResponse.setEncoding('utf8');
-    if (externalResponse.statusCode == 201) {
+    if (externalResponse.statusCode === 201) {
       externalResponse.on('data', function(chunk){
         var chunkdata = JSON.parse(chunk);
         sendMeldung(socket, "Genre geändert");
@@ -349,7 +349,7 @@ function putAllowedGenres(socket, data) {
         });
       });
     }
-    else sendMeldung(socket, "Fehler: Hier "+externalResponse.statusCode);
+    else sendMeldung(socket, "Fehler:" +externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);
     });

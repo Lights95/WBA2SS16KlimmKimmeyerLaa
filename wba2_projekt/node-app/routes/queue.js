@@ -36,7 +36,7 @@ var validate2 = ajv.compile(allowedSchema);
 router.post('/', function(req, res){
     /*Filtert alle Songs*/
     var inQueue    = false;
-    var unAllowed  = false;
+    var allowed  = false;
     var queueEntry = {};
     var valid      = validate(req.body);
     
@@ -73,30 +73,31 @@ router.post('/', function(req, res){
                         return JSON.parse(genre);
                     });
                 genres.forEach(function(genre){
-                    if((queueEntry.genre !== genre.allowedGenres) || (queueEntry.genre===undefined)){
-                        unAllowed=true;
+                    console.log(genre.name);
+                    console.log(queueEntry.genre);
+                    if(queueEntry.genre === genre.name){
+                        allowed=true;
                     }
                 });
-            });
-        });
-    
-        if(unAllowed){
-            return res.status(403).json({message: 'Genre dieses Songs passt nicht zur Party.'});
-        }
-        
-        if(inQueue){
-            return res.status(406).json({message : 'Der Song ist schon in der Queue.'});
-        }
-        else{
-            db.incr('queueNumber',function(err, id){
-            queueEntry.queueNumber = id;
-                /*Erstellt neuen Warteschlangeneintrag in der Datenbank*/
-                db.rpush('queue', JSON.stringify(queueEntry), function(err, newOrder){
-                        /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/
-                        return res.status(201).json(queueEntry);
+                
+            if(!allowed){
+                return res.status(403).json({message: 'Genre dieses Songs passt nicht zur Party.'});
+            }
+
+            else if(inQueue){
+                return res.status(406).json({message : 'Der Song ist schon in der Queue.'});
+            }
+            else{
+                db.incr('queueNumber',function(err, id){
+                queueEntry.queueNumber = id;
+                    /*Erstellt neuen Warteschlangeneintrag in der Datenbank*/
+                    db.rpush('queue', JSON.stringify(queueEntry), function(err, newOrder){
+                            /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/
+                            return res.status(201).json(queueEntry);
+                    });
                 });
-            });
-        }
+            }});
+        });
     });  
 });
 
@@ -189,11 +190,3 @@ router.delete('/allowedGenres/:id' , function(req,res){
 //Zufällige Fortführung fehlt noch
 
 module.exports = router;
-
-
-/*
-
-    
-    
-    
-*/
