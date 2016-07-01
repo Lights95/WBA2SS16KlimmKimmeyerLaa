@@ -176,10 +176,13 @@ function sendAllowedGenres(socket) {
 
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
-    externalResponse.on('data', function(chunk){
-      var genredata = JSON.parse(chunk);
-      socket.emit("resAllowedGenres", genredata);
-    });
+    if (externalResponse.statusCode == 201) {
+      externalResponse.on('data', function(chunk){
+        console.log(chunk);
+        var genredata = JSON.parse(chunk);
+        socket.emit("resAllowedGenres", genredata);
+      });
+    }
   });
   externalRequest.end();
 }
@@ -357,7 +360,7 @@ function putAllowedGenres(socket, data) {
       sendMeldung(socket, "Error: "+e);
     });
   });
-  externalRequest.write('{"name": '+data);
+  externalRequest.write('{"genreID": '+data+'}');
   externalRequest.end();
 }
 
