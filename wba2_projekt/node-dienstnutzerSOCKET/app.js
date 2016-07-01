@@ -113,10 +113,12 @@ function sendGenres(socket) {
 
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
-    externalResponse.on('data', function(chunk){
-      var genredata = JSON.parse(chunk);
-      socket.emit("resGenres", genredata);
-    });
+    if (externalResponse.statusCode == 200) {
+      externalResponse.on('data', function(chunk){
+        var genredata = JSON.parse(chunk);
+        socket.emit("resGenres", genredata);
+      });
+    }
   });
   externalRequest.end();
 }
@@ -134,10 +136,12 @@ function sendSongs(socket) {
 
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
-    externalResponse.on('data', function(chunk){
-      var songdata = JSON.parse(chunk);
-      socket.emit("resSongs",songdata);
-    });
+    if (externalResponse.statusCode == 200) {
+      externalResponse.on('data', function(chunk){
+        var songdata = JSON.parse(chunk);
+        socket.emit("resSongs",songdata);
+      });
+    }
   });
   externalRequest.end();
 }
@@ -155,10 +159,12 @@ function sendArtists(socket) {
 
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
-    externalResponse.on('data', function(chunk){
-      var songdata = JSON.parse(chunk);
-      socket.emit("resArtists",songdata);
-    });
+    if (externalResponse.statusCode == 200) {
+      externalResponse.on('data', function(chunk){
+        var songdata = JSON.parse(chunk);
+        socket.emit("resArtists",songdata);
+      });
+    }
   });
   externalRequest.end();
 }
@@ -355,7 +361,7 @@ function putAllowedGenres(socket, data) {
         });
       });
     }
-    else sendMeldung(socket, "Das funktioniert leider noch nicht");
+    else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);
     });
