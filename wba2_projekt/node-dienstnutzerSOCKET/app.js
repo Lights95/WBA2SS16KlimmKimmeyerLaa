@@ -221,7 +221,7 @@ function postQueue(socket, data) {
       });
     }
     else if(externalResponse.statusCode == 403){
-        sendMeldung(socket, "Es darf nur das Genre House gespielt werden");
+        sendMeldung(socket, "Falsches Genre");
     }
     else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
     externalResponse.on('error', function(e) {
