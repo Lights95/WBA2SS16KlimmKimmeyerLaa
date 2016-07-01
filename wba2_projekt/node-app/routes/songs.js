@@ -70,21 +70,22 @@ router.post('/', function(req, res){
                 if(rep){
                     song.artist=JSON.parse(rep).name;
                 }
-            });
+            
             db.get('genre:' +req.body.genre, function(err, ren){
                 if(ren){
                     song.genre= JSON.parse(ren).name;
                 }
-            });
+            
 
             /*Erstellt neuen Song in der Datenbank*/
             db.incr('songIDs', function(err, id){
                 song.id=id;
                 db.set('song:' + song.id, JSON.stringify(song), function(err, newSong){
                     /*neuer Song wird als JSON Objekt zurückgegeben*/
-                    console.log(JSON.stringify(song));
                     res.status(201).json(song);
                 });
+            });
+            });
             });
         });
     });

@@ -7,7 +7,7 @@
       socket.emit("getSongs");
       socket.emit("getGenres");
       socket.emit("getArtists");
-      //socket.emit("getAllowedGenre");
+      socket.emit("getAllowedGenres");
 
       /*Bei empfangen der Daten*/
       socket.on('resQueue', function(data){
@@ -33,9 +33,9 @@
         meldung(msg);
       });
 
-      socket.on('resAllowedGenre', function(data){
-        document.getElementById("allowedGenre").innerHTML = " ";
-        document.getElementById("allowedGenre").innerHTML = data.genre;
+      socket.on('resAllowedGenres', function(data){
+        document.getElementById("allowedGenres").innerHTML = " ";
+        document.getElementById("allowedGenres").innerHTML = data.name;
       });
 
       function displayQueue(data) {
@@ -225,7 +225,7 @@
             }
         }
 
-        socket.emit("putAllowedGenre", genreID);
+        socket.emit("putAllowedGenres", genreID);
       }
 
       /*Um Meldungen zu machen*/

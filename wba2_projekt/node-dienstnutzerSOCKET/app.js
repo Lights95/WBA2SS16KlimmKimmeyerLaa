@@ -40,8 +40,8 @@ io.on('connection', function(socket){
     sendArtists(socket);
   });
 
-  socket.on('getAllowedGenre', function(){
-    sendAllowedGenre(socket);
+  socket.on('getAllowedGenres', function(){
+    sendAllowedGenres(socket);
   });
 
   /*Verarbeite Daten*/
@@ -61,8 +61,8 @@ io.on('connection', function(socket){
     postSong(socket, data);
   });
 
-  socket.on('putAllowedGenre', function(data){
-    putAllowedGenre(socket, data);
+  socket.on('putAllowedGenres', function(data){
+    putAllowedGenres(socket, data);
   });
 
 
@@ -163,11 +163,11 @@ function sendArtists(socket) {
   externalRequest.end();
 }
 
-function sendAllowedGenre(socket) {
+function sendAllowedGenres(socket) {
   var options = {
       host: 'localhost',
       port: 3000,
-      path: '/api/allowedGenre',
+      path: '/api/queue/allowedGenres',
       method: 'GET',
       headers: {
         accept: 'application/json'
@@ -178,7 +178,7 @@ function sendAllowedGenre(socket) {
     console.log('Verbindung mit Webservice hergestellt!');
     externalResponse.on('data', function(chunk){
       var genredata = JSON.parse(chunk);
-      socket.emit("resAllowedGenre", genredata);
+      socket.emit("resAllowedGenres", genredata);
     });
   });
   externalRequest.end();
@@ -324,11 +324,11 @@ function postSong(socket, data) {
 
 
 
-function putAllowedGenre(socket, data) {
+function putAllowedGenres(socket, data) {
   var options = {
       host: 'localhost',
       port: 3000,
-      path: '/api/allowedGenre',
+      path: '/api/queue/allowedGenres',
       method: 'PUT',
       headers: {
         "content-type": "application/json",
@@ -345,7 +345,7 @@ function putAllowedGenre(socket, data) {
 
         /*jedem Client die neue Queue senden*/
         clientSockets.forEach(function(clientSocket) {
-          sendAllowedGenre(clientSocket);
+          sendAllowedGenres(clientSocket);
         });
       });
     }
