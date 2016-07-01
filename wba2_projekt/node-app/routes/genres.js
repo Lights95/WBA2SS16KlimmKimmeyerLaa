@@ -52,7 +52,7 @@ router.post('/', function(req, res){
 
 
             if(gesetzt){
-                return res.status(200).json({message : "Genre bereits vorhanden."});
+                return res.status(406).json({message : "Genre bereits vorhanden."});
             }
             /*Erstellt neues Genre in der Datenbank*/
             db.incr('genreID', function(err, id){
