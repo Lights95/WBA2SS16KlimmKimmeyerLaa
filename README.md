@@ -145,8 +145,8 @@ Bei Funktionsaufrufen von Sockets reagiert der Dienstnutzer darauf und baut eine
 
 ###3.2) Funktionen des Dienstnutzers
 
-####3.2.1)
-Sobald eine socket Verbindung besteht stehen dem socket folgende Methoden zu Verfügung. Diese kann er über `socket.emit('listenername', data)` erreichen.
+####3.2.1) Listener
+Sobald eine Socket-Verbindung besteht stehen dem socket folgende Methoden zu Verfügung. Diese kann er über `socket.emit('listenername', data)` erreichen.
 
 *Beispiele:*
 
@@ -166,9 +166,131 @@ socket.on('postSong', function(data){
 });
 ```
 
+####3.2.2) Interne Funktionen
+Durch die dargestellten Listener werden Funktionen ausgeführt, die die Daten an View und Service senden.
+
+*Beispiele Funktionen*
+
+```
+function sendSongs(socket) {
+	var options = {
+			host: 'localhost',
+			port: 3000,
+			path: '/api/songs',
+			method: 'GET',
+			headers: {
+				accept: 'application/json'
+			}
+	};
+
+	var externalRequest = http.request(options, function(externalResponse){
+		console.log('Verbindung mit Webservice hergestellt!');
+		externalResponse.on('data', function(chunk){
+			var songdata = JSON.parse(chunk);
+			socket.emit("resSongs",songdata);
+		});
+	});
+	externalRequest.end();
+}
+
+function postSong(socket, data) {
+ var options = {
+		 host: 'localhost',
+		 port: 3000,
+		 path: '/api/songs',
+		 method: 'POST',
+		 headers: {
+			 "content-type": "application/json",
+		 }
+ };
+
+ var externalRequest = http.request(options, function(externalResponse){
+	 console.log('Verbindung mit Webservice hergestellt!');
+	 externalResponse.setEncoding('utf8');
+	 if (externalResponse.statusCode == 201) {
+		 externalResponse.on('data', function(chunk){
+			 var chunkdata = JSON.parse(chunk);
+			 sendMeldung(socket, "Song hinzugefügt");
+
+			 /*jedem Client die neue Queue senden*/
+			 clientSockets.forEach(function(clientSocket) {
+				 sendSongs(clientSocket);
+			 });
+		 });
+	 }
+	 else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
+	 externalResponse.on('error', function(e) {
+		 sendMeldung(socket, "Error: "+e);
+	 });
+ });
+ externalRequest.write('{"title": "'+data.title+'", "artist": '+data.artistID+', "genre": '+data.genreID+' }');
+ externalRequest.end();
+}
+```
+
+In den Funktionen wird zum Aufbau der HTTP Verbindungen zum REST Service das node-Package "HTTP" verwendet. Beim Aufruf auf eine Ressource wird der übermittelte HTTP Status Code überprüft. Entspricht er der Entwartung, wird eine Erfolgsmeldung an die View geschickt und mit einem "Toast" eingeblendet. Parallel wird die gewünschte Aktion ausgeführt und auf allen Sockets synchronisiert. Falls der Code abweicht wird der Code als Antwort übermittelt.
+
+
 ###3.3) Funktionen der Dienstnutzer View
 
 ####3.3.1) Listener
+Die View besitzt Listener um bei Antworten des Dienstnutzers reagieren zu können.
+
+```
+socket.on('resSongs', function(data){
+  document.getElementById("songsInDB").innerHTML = data.length;
+  displaySongs(data);
+});
+```
+
+Durch das Auslösen eines Listeners werden wieder unterschiedliche Funktionen ausgelöst.
+
+```
+function displaySongs(data) {
+  if (data.length === 0) {
+    document.getElementById("songs").innerHTML = '<section class="section--center" style="text-align: center;"><p>Zur Zeit keine Songs in der Warteliste!</p></section>';
+    document.getElementById("admin-song-list").innerHTML = '<p>Zur Zeit keine Songs in der Warteliste!</p>';
+  }
+  else {
+    document.getElementById("songs").innerHTML = "";
+    document.getElementById("admin-song-list").innerHTML = "";
+    for (var i = 0; i < data.length; i++) {
+      var newSonglistObject = document.createElement("section");
+      newSonglistObject.className = "section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp";
+      newSonglistObject.innerHTML =
+      '<header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">' +
+        '<i class="material-icons">play_circle_filled</i>'+
+      '</header>'+
+      '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
+        '<div class="mdl-card__supporting-text">'+
+          '<h4>#'+(i+1)+' '+data[i].title+'</h4>'+
+          'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
+        '</div>'+
+        '<div class="mdl-card__actions">'+
+          '<a href="#" class="mdl-button" onclick="addToQueue('+data[i].id+');">Zur Warteliste hinzufügen</a>'+
+        '</div>'+
+      '</div>';
+
+      var newAdminSonglistObject = document.createElement("li");
+      newAdminSonglistObject.innerHTML = data[i].title+"<br><i>"+data[i].artist+"//"+data[i].genre+"</i>";
+
+      document.getElementById("songs").appendChild(newSonglistObject);
+      document.getElementById("admin-song-list").appendChild(newAdminSonglistObject);
+    }
+  }
+}
+```
+
+Funktionen greifen auf HTML Elemente zu um ihre Werte zu bekommen. Durch Funktionen werden außerdem auch neue Elemente generiert und eingefügt.
+
+Desweiteren gibt es auch FUnktionen die durch Buttons im Dokument ausgelöst werden.
+
+```
+function addToQueue(id) {
+  socket.emit("postQueue", id);
+}
+```
+
 
 ##4) Fazit
 ##5) Arbeitsmatrix
