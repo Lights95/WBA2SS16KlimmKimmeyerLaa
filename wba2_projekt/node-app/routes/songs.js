@@ -111,7 +111,7 @@ router.get('/', function(req, res){
     });
 });
 
-//Song bearbeiten
+//Song bearbeiten- Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
 router.put('/:id', function(req,res){
     var id= req.params.id;
     db.exists('song:'+id,function(err,rep){
@@ -126,7 +126,7 @@ router.put('/:id', function(req,res){
     });
 });
 
-//Bestimmten Song ausgeben
+//Bestimmten Song ausgeben 
 router.get('/:id', function(req, res){
    db.get('song:'+req.params.id, function(err,rep){
        if(rep){

@@ -1,3 +1,5 @@
+//Funktioniert vom Prinzip her, wie die Artists.
+
 //Einbindung der Module
 var express = require('express');
 var Ajv = require('ajv');
@@ -6,7 +8,7 @@ var router = express.Router();
 var db = redis.createClient();
 var ajv = Ajv({allErrors: true});
 
-//Datenhaltung von Genre wird definiert
+//Datenhaltung von Genre wird definiert 
 var genreSchema={
     'properties': {
         'name':{

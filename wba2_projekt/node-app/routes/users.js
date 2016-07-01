@@ -25,8 +25,10 @@ var userSchema={
     'required': ['id', 'name', 'group']
 };
 
+//Funktionen funktionieren wahrscheinlich, momentan aber noch nicht von Bedeutung
 
-/*User anlegen*/
+
+//User anlegen - Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
 router.post('/', function(req, res){
     var valid = validate(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
@@ -69,7 +71,7 @@ router.post('/', function(req, res){
     });
 });
 
-//User ausgeben
+//User ausgeben - Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
 router.get('/', function(req, res){
     db.keys('user:*', function(err,keys){
         if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
@@ -87,7 +89,7 @@ router.get('/', function(req, res){
     });
 });
 
-//Einzelnen User bearbeiten
+//Einzelnen User bearbeiten - Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
 router.put('/:id', function(req,res){
     var id= req.params.id;
     db.exists('user:'+id,function(err,rep){
@@ -103,7 +105,7 @@ router.put('/:id', function(req,res){
 });
 
 
-/*Bestimmten User ausgeben*/
+//Bestimmten User ausgeben - Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
 router.get('/:id', function(req, res){
    db.get('user:'+req.params.id, function(err,rep){
        if(rep){
@@ -115,7 +117,7 @@ router.get('/:id', function(req, res){
    });
 });
 
-//User löschen
+//User löschen - Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
 router.delete('/:id', function(req, res){
     var id = req.params.id;
     db.exists('user:'+id, function(err,rep){

@@ -7,8 +7,9 @@ var ajv = Ajv({allErrors:true});
 var async = require('asyncawait/async');
 var await = require('asyncawait/await');
 
+//Queue ist vom Datentyp List
 
-/*Queue*/
+/*Queue, vom Dienstnutzer wird nur ID empfangen und anschließend wird diese über einen get- Befehl als Song gespeichert*/
 var queueSchema={
     'properties': {
         'id': {
@@ -19,6 +20,7 @@ var queueSchema={
     'required': ['id']
 };
 
+// Schema für allowedGenres - ID empfangen, als Genre gespeichert
 var allowedSchema={
     'properties':{
         'genreID':{
@@ -34,7 +36,6 @@ var validate2 = ajv.compile(allowedSchema);
 
 //neues Lied an der Queue anhängen
 router.post('/', function(req, res){
-    /*Filtert alle Songs*/
     var inQueue    = false;
     var allowed  = false;
     var queueEntry = {};
@@ -42,6 +43,7 @@ router.post('/', function(req, res){
     
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
     
+    //Holt das Songobjekt als komplettes Objekt heran, bis auf die Songid und speichert dies in Songentry
     db.get('song:' + req.body.id, function(err, ren){
             queueEntry.title  = JSON.parse(ren).title;
             queueEntry.artist = JSON.parse(ren).artist;
@@ -49,10 +51,10 @@ router.post('/', function(req, res){
             queueEntry.id     = req.body.id;
     });
     
-   
-    db.lrange('queue',0,100,function (err,songs){
+    //Gibt die ersten 50 Einträge der queue zurück - Ab hier wird geguckt, ob der Song schon in der Queue ist
+    db.lrange('queue',0,50,function (err,songs){
         if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
-
+        //speichert Einträge als neues Array in songs, geparst
         songs=songs.map(function(song){
             return JSON.parse(song);
         });
@@ -61,10 +63,14 @@ router.post('/', function(req, res){
         songs.forEach(function(song){
             if(song.id === queueEntry.id) {
                 inQueue=true;
-                console.log("vor Ende");
             }
         });
+    //Bis hierhin wird geguckt, ob der Song schon in der Queue ist  
         
+    //Aufgrund der Callbackhölle, ist das ganze sehr verschachtelt aufgebaut worden - Ab hier wird überprüft, ob das Genre des Songs erlaubt ist.
+        
+        
+    //funktioniert nicht in Webanwendung, da vom Dienstnutzer nicht richtig reagiert wird --> 2.Projektphase
         db.keys('allowedGenres:*', function(err, keys){
             if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
             db.mget(keys, function(err, genres){
@@ -73,13 +79,12 @@ router.post('/', function(req, res){
                         return JSON.parse(genre);
                     });
                 genres.forEach(function(genre){
-                    console.log(genre.name);
-                    console.log(queueEntry.genre);
                     if(queueEntry.genre === genre.name){
                         allowed=true;
                     }
                 });
                 
+    //Bis Hier wird überprüft, ob das Genre des Songs erlaubt ist. 
             if(!allowed){
                 return res.status(403).json({message: 'Genre dieses Songs passt nicht zur Party.'});
             }
@@ -88,6 +93,7 @@ router.post('/', function(req, res){
                 return res.status(406).json({message : 'Der Song ist schon in der Queue.'});
             }
             else{
+                //queueNumber jedes Mal erhöht 
                 db.incr('queueNumber',function(err, id){
                 queueEntry.queueNumber = id;
                     /*Erstellt neuen Warteschlangeneintrag in der Datenbank*/
@@ -115,6 +121,7 @@ router.get('/', function(req, res){
 });
 
 //gehörten Song entfernen
+//Entfernt den Song der "First In" ist. Das soll das Hören des Musikstückes simulieren
 router.delete('/', function(req, res){
     db.llen('queue', function(err,rep){
         if(rep===0)res.status(404).type('plain').send('Es ist exitiert kein Song in der Warteschlange');
@@ -129,26 +136,33 @@ router.delete('/', function(req, res){
 //Verwendung von allowedGenres als Subressource zur Primärressource Queue
 
 /*Updated die erlaubten Genres der Queue über eine Subressource*/
+
+//funktioniert nicht in Webanwendung, da vom Dienstnutzer nicht richtig reagiert wird --> 2.Projektphase
 router.put('/allowedGenres', function(req, res){
+    
     var valid = validate2(req.body);
     //Validierung
+    
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
     var genreID = req.body.genreID;
     
      db.incr('allowedGenresID', function(err, id){                                
         var allowedGenres = {};
-        allowedGenres.nr=id;
+        allowedGenres.id=id;
         
         db.get('genre:' + genreID , function(err, ren){
             allowedGenres.name = JSON.parse(ren).name;
             allowedGenres.genreID   = req.body.genreID;
-            db.set('allowedGenres:' + allowedGenres.nr, JSON.stringify(allowedGenres),function(err,rep){
+            db.set('allowedGenres:' + allowedGenres.id, JSON.stringify(allowedGenres),function(err,rep){
                 res.status(201).json(allowedGenres);
             });
         });
     });
 });
 
+
+
+//funktioniert nicht in Webanwendung, da vom Dienstnutzer nicht richtig reagiert wird --> 2.Projektphase
 
 router.get('/allowedGenres', function(req,res){
    db.keys('allowedGenres:*', function(err,keys){
@@ -167,6 +181,8 @@ router.get('/allowedGenres', function(req,res){
     }); 
 });
 
+
+//funktioniert nicht in Webanwendung, da vom Dienstnutzer nicht richtig reagiert wird --> 2.Projektphase
 
 /*Löscht ein erlaubtes Genre der Queue mit einer bestimmten ID, wenn dieses Genre nicht bereits nicht vorhanden ist.*/
 router.delete('/allowedGenres/:id' , function(req,res){

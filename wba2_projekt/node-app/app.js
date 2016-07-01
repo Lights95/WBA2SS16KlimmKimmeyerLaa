@@ -3,9 +3,10 @@ var redis =require('redis');
 var bodyParser = require('body-parser');
 var db = redis.createClient();       
 
+
+//Wir möchten bei jeder Anwendung mit einer leeren Queue starten
 db.del('queue');
 db.del('queueNumber');
-db.del('allowedGenres');
 
 var app = express();
 app.use(bodyParser.json());
