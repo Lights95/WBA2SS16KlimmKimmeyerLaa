@@ -21,12 +21,12 @@ var queueSchema={
 
 var allowedSchema={
     'properties':{
-        'id':{
+        'genreID':{
             'type': 'number',
             'maxProperties': 4
         }
     },
-    'required': ['id']
+    'required': ['genreID']
 };
 
 var validate = ajv.compile(queueSchema);
@@ -138,16 +138,16 @@ router.put('/allowedGenres', function(req, res){
     var valid = validate2(req.body);
     //Validierung
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
-    var id = req.body;
+    var genreID = req.body.genreID;
     
      db.incr('allowedGenresID', function(err, id){                                
         var allowedGenres = {};
-        allowedGenres.id=id;
+        allowedGenres.nr=id;
         
-        db.get('genre:' + req.body.id , function(err, ren){
+        db.get('genre:' + genreID , function(err, ren){
             allowedGenres.name = JSON.parse(ren).name;
             allowedGenres.id   = req.body.id;
-            db.set('allowedGenres:' + id, JSON.stringify(allowedGenres),function(err,rep){
+            db.set('allowedGenres:' + allowedGenres.nr, JSON.stringify(allowedGenres),function(err,rep){
                 res.status(201).json(allowedGenres);
             });
         });

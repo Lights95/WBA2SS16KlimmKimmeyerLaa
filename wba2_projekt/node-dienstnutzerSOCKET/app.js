@@ -349,12 +349,12 @@ function putAllowedGenres(socket, data) {
         });
       });
     }
-    else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
+    else sendMeldung(socket, "Fehler: Hier "+externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);
     });
   });
-  externalRequest.write('{"genre": '+data);
+  externalRequest.write('{"name": '+data);
   externalRequest.end();
 }
 
