@@ -72,10 +72,10 @@ router.post('/', function(req, res){
 //User ausgeben
 router.get('/', function(req, res){
     db.keys('user:*', function(err,keys){
-        if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+        if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
         else{
             db.mget(keys, function(err, users){
-                if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+                if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
                 else{
                     users=users.map(function(user){
                         return JSON.parse(user);

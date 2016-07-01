@@ -104,7 +104,7 @@ router.post('/', function(req, res){
 //Warteschlange ausgeben
 router.get('/', function(req, res){
     db.lrange('queue', 0, 100, function(err, songs){
-        if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+        if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
         else{
             songs=songs.map(function(song){
                 return JSON.parse(song);
@@ -127,12 +127,6 @@ router.delete('/', function(req, res){
 });
 
 //Verwendung von allowedGenres als Subressource zur Primärressource Queue
-
-router.post('/allowedGenres', function(req,res){
-   
-    
-   
-});
 
 /*Updated die erlaubten Genres der Queue über eine Subressource*/
 router.put('/allowedGenres', function(req, res){

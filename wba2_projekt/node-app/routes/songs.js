@@ -96,7 +96,7 @@ router.post('/', function(req, res){
 //Alle Songs ausgeben
 router.get('/', function(req, res){
     db.keys('song:*', function(err,keys){
-        if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+        if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
         else{
             db.mget(keys, function(err, songs){
                 if(err)res.status(404).type('plain').send('Error beim Auslesen.');

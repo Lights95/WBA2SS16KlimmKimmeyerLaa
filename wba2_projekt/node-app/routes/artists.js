@@ -95,10 +95,10 @@ router.post('/', function(req, res){
 //Artists ausgeben
 router.get('/', function(req, res){
     db.keys('artist:*', function(err,keys){
-        if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+        if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
         else{
             db.mget(keys, function(err, artists){
-                if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+                if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
                 else{
                     artists=artists.map(function(artist){
                         return JSON.parse(artist);
@@ -109,7 +109,6 @@ router.get('/', function(req, res){
         }
     });
 });
-
 
 //Einzelnen Artist bearbeiten
 router.put('/:id', function(req,res){

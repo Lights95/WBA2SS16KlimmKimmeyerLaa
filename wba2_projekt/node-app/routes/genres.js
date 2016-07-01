@@ -68,10 +68,10 @@ router.post('/', function(req, res){
 //Genre ausgeben
 router.get('/', function(req, res){
     db.keys('genre:*', function(err,keys){
-        if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+        if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
         else{
             db.mget(keys, function(err, genres){
-                if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+                if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
                 else{
                     genres=genres.map(function(genre){
                         return JSON.parse(genre);
