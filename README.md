@@ -145,9 +145,7 @@ Bei Funktionsaufrufen von Sockets reagiert der Dienstnutzer darauf und baut eine
 
 ###3.2) Funktionen des Dienstnutzers
 
-###3.3) Funktionen der Dienstnutzer View
-
-####3.3.1) Listener
+####3.2.1)
 Sobald eine socket Verbindung besteht stehen dem socket folgende Methoden zu Verfügung. Diese kann er über `socket.emit('listenername', data)` erreichen.
 
 *Beispiele:*
@@ -167,6 +165,10 @@ socket.on('postSong', function(data){
 	postSong(socket, data);
 });
 ```
+
+###3.3) Funktionen der Dienstnutzer View
+
+####3.3.1) Listener
 
 ##4) Fazit
 ##5) Arbeitsmatrix
