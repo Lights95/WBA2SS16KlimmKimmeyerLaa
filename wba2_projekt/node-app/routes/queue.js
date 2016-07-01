@@ -139,7 +139,6 @@ router.delete('/', function(req, res){
 
 //funktioniert nicht in Webanwendung, da vom Dienstnutzer nicht richtig reagiert wird --> 2.Projektphase
 router.put('/allowedGenres', function(req, res){
-    console.log(req.body);
     var valid = validate2(req.body);
     //Validierung
 
