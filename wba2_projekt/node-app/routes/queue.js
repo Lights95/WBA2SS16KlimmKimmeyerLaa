@@ -146,7 +146,7 @@ router.put('/allowedGenres', function(req, res){
         
         db.get('genre:' + genreID , function(err, ren){
             allowedGenres.name = JSON.parse(ren).name;
-            allowedGenres.id   = req.body.id;
+            allowedGenres.genreID   = req.body.genreID;
             db.set('allowedGenres:' + allowedGenres.nr, JSON.stringify(allowedGenres),function(err,rep){
                 res.status(201).json(allowedGenres);
             });
