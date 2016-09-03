@@ -22,11 +22,9 @@ Zudem würde er sich gerne im Nachhinein die Playlist des Abends angucken, um ne
 ###Problem:
 Niklas möchte gerne ein System haben, mit Hilfe dessen er sich und seinen Gästen die Möglichkeit gibt, sich Songs zu wünschen. Doppelte Lieder oder Lieder, die schon einmal gespielt wurden, sollen dabei selbst verständlich ignoriert werden. Es ist Niklas aber auch noch sehr wichtig dabei, dass er immer noch die Entscheidungsgewalt besitzt, welche Lieder gespielt werden.
 
-##Starten der Webanwendung, des Servers und des Clients
-1.) */wba2_projekt/node-app/* : 
-
-redis-server starten, bitte im node-app Ordner unter Verwendung einer nicht leeren Datenbank(dump.rdb wird mitgegeben)
-
+##Starten der Webanwendung, des Servers und des Clients  
+1.) */wba2_projekt/node-app/* :  
+redis-server starten, bitte im node-app Ordner unter Verwendung einer nicht leeren Datenbank(dump.rdb wird mitgegeben)  
 2.) */wba2_projekt/node-app/* :  
 node app.js starten  
 3.) */wba2_projekt/node-dienstnutzerSOCKET/* :  
