@@ -24,10 +24,12 @@ Niklas möchte gerne ein System haben, mit Hilfe dessen er sich und seinen Gäst
 
 ##Starten der Webanwendung, des Servers und des Clients
 1.) */wba2_projekt/node-app/* : 
+
 redis-server starten, bitte im node-app Ordner unter Verwendung einer nicht leeren Datenbank(dump.rdb wird mitgegeben)
-2.) */wba2_projekt/node-app/* :
-node app.js starten
-3.) */wba2_projekt/node-dienstnutzerSOCKET/* :
-node app.js starten
-4.) *Browser* :
+
+2.) */wba2_projekt/node-app/* :  
+node app.js starten  
+3.) */wba2_projekt/node-dienstnutzerSOCKET/* :  
+node app.js starten  
+4.) *Browser* :  
 http://localhost:8080/ aufrufen
