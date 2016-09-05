@@ -6,6 +6,7 @@ var Ajv = require('ajv');
 var router = express.Router();
 var db = redis.createClient();
 var ajv = Ajv({allErrors: true});
+var async = require('async');
 
 
 /*Songsschema*/
@@ -92,20 +93,20 @@ router.post('/', function(req, res){
 
 //Alle Songs ausgeben
 router.get('/', function(req, res){
-    db.keys('song:*', function(err,keys){
-        if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
-        else{
-            db.mget(keys, function(err, songs){
-                if(err)res.status(404).type('plain').send('Error beim Auslesen.');
-                else{
-                    songs=songs.map(function(song){
-                        return JSON.parse(song);
-                    });
-                    res.status(200).json(songs);
-                }
-            });
-        }
-    });
+  db.keys('song:*', function(err,keys){
+      if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
+      else{
+          db.mget(keys, function(err, songs){
+              if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+              else{
+                  songs=songs.map(function(song){
+                      return JSON.parse(song);
+                  });
+                  res.status(200).json(songs);
+              }
+          });
+      }
+  });
 });
 
 //Song bearbeiten- Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet

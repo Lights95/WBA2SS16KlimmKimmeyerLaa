@@ -223,6 +223,9 @@ function postQueue(socket, data) {
     else if(externalResponse.statusCode == 403){
         sendMeldung(socket, "Falsches Genre");
     }
+    else if(externalResponse.statusCode == 406){
+        sendMeldung(socket, "Dieser Song ist bereits in der Queue!")
+    }
     else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);
