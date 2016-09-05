@@ -187,8 +187,8 @@ function sendAllowedGenres(socket) {
     if (externalResponse.statusCode == 200) {
       externalResponse.on('data', function(chunk){
         var genredata = JSON.parse(chunk);
-        console.log(genredata[0].name);
-        socket.emit("resAllowedGenres", genredata[0]);
+        console.log(genredata);
+        socket.emit("resAllowedGenres", genredata);
       });
     }
   });
@@ -369,13 +369,13 @@ function postSong(socket, data) {
 
 function putAllowedGenres(socket, data) {
   var options = {
-      host: 'localhost',
-      port: 3000,
-      path: '/api/queue/allowedGenres',
-      method: 'PUT',
-      headers: {
-        "content-type": "application/json",
-      }
+    host: 'localhost',
+    port: 3000,
+    path: '/api/queue/allowedGenres',
+    method: 'PUT',
+    headers: {
+      "content-type": "application/json",
+    }
   };
 
   var externalRequest = http.request(options, function(externalResponse){
@@ -384,7 +384,7 @@ function putAllowedGenres(socket, data) {
     if (externalResponse.statusCode === 201) {
       externalResponse.on('data', function(chunk){
         var chunkdata = JSON.parse(chunk);
-        sendMeldung(socket, "Genre geändert");
+        sendMeldung(socket, "Genres geändert");
 
         /*jedem Client die neuen Erlaubten Genres senden*/
         clientSockets.forEach(function(clientSocket) {

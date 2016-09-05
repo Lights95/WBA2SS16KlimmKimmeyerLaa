@@ -34,9 +34,21 @@
       });
 
       socket.on('resAllowedGenres', function(data){
-        document.getElementById("allowedGenres").innerHTML = " ";
-        document.getElementById("allowedGenres").innerHTML = data.name;
+        displayAllowedGenres(data);
       });
+
+      function displayAllowedGenres(data){
+        if(data.length === 0){
+          document.getElementById('allowedGenres').innerHTML = " ";
+          document.getElementById("allowedGenres").innerHTML = "Alle";
+        }else{
+          document.getElementById("allowedGenres").innerHTML = " ";
+          for(var i=0; i<data.length; i++){
+            if(i===0) document.getElementById("allowedGenres").innerHTML = data[i].name;
+            else document.getElementById("allowedGenres").innerHTML +=", " + data[i].name;
+          }
+        }
+      }
 
       function displayQueue(data) {
         if (data.length === 0) document.getElementById("queue").innerHTML = '<section class="section--center" style="text-align: center;"><p>Zur Zeit keine Songs in der Warteliste!</p></section>';
@@ -88,8 +100,12 @@
               '</div>'+
             '</div>';
 
-            var newAdminSonglistObject = document.createElement("li");
-            newAdminSonglistObject.innerHTML = data[i].title+"<br><i>"+data[i].artist+"//"+data[i].genre+"</i>";
+            var newAdminSonglistObject = document.createElement("label");
+            newAdminSonglistObject.className ="mdl-radioCustom mdl-js-radio mdl-js-ripple-effect";
+            newAdminSonglistObject.setAttribute("for", "admin-delete-song"+data[i].id);
+            newAdminSonglistObject.innerHTML =
+            '<input type="radio" id="admin-delete-song'+data[i].id+'" class="mdl-radio__button" name="options-artist1" value="'+data[i].id+'">'+
+            '<span class="mdl-radio__label">'+ data[i].title +"//<i>"+ data[i].artist+ "//"+ data[i].genre+ "</i><br></span>";
 
             document.getElementById("songs").appendChild(newSonglistObject);
             document.getElementById("admin-song-list").appendChild(newAdminSonglistObject);
@@ -110,18 +126,18 @@
           document.getElementById("admin-options-genre-radios").innerHTML = " ";
           for (var i = 0; i < data.length; i++) {
             var newObject = document.createElement("label");
-            newObject.className ="mdl-radio mdl-js-radio mdl-js-ripple-effect";
-            newObject.setAttribute("for", "admin-delete-song"+data[i].id);
+            newObject.className ="mdl-radioCustom mdl-js-radio mdl-js-ripple-effect";
+            newObject.setAttribute("for", "admin-delete-genre"+data[i].id);
             newObject.innerHTML =
-            '<input type="radio" id="admin-delete-song'+data[i].id+'" class="mdl-radio__button" name="options-genre3" value="'+data[i].id+'">'+
-            '<span class="mdl-radio__label">'+data[i].name+'<br></span>';
+            '<input type="radio" id="admin-delete-genre'+data[i].id+'" class="mdl-radio__button" name="options-genre3" value="'+data[i].id+'">'+
+            '<span class="mdl-radio__label">'+data[i].name + "(" +data[i].id+ ")<br></span>";
 
 
             var newObject2 = document.createElement("label");
             newObject2.className = "mdl-radio mdl-js-radio mdl-js-ripple-effect";
             newObject2.setAttribute("for", "admin-addSong-genre-radios__option-"+data[i].id);
             newObject2.innerHTML =
-            '<input type="radio" id="admin-addSong-genre-radios__option-'+data[i].id+'" class="mdl-radio__button" name="options-genre1" value="'+data[i].id+'">'+
+            '<input type="radio" id="admin-addSong-genre-radios__option-"'+ data[i].id + ' class="mdl-radio__button" name="options-genre1" value="'+data[i].id+'">'+
             '<span class="mdl-radio__label">'+data[i].name+'</span>';
 
 
@@ -150,8 +166,12 @@
           document.getElementById("admin-artist-list").innerHTML = " ";
           document.getElementById("admin-addSong-artist-radios").innerHTML = " ";
           for (var i = 0; i < data.length; i++) {
-            var newObject = document.createElement("li");
-            newObject.innerHTML = data[i].name+"("+data[i].id+")";
+            var newObject = document.createElement("label");
+            newObject.className ="mdl-radioCustom mdl-js-radio mdl-js-ripple-effect";
+            newObject.setAttribute("for", "admin-delete-artist"+data[i].id);
+            newObject.innerHTML =
+            '<input type="radio" id="admin-delete-artist'+data[i].id+'" class="mdl-radio__button" name="options-artist1" value="'+data[i].id+'">'+
+            '<span class="mdl-radio__label">'+data[i].name + "(" +data[i].id+ ")<br></span>";
 
             var newObject2 = document.createElement("label");
             newObject2.className = "mdl-radio mdl-js-radio mdl-js-ripple-effect";
@@ -216,14 +236,13 @@
       }
 
       function saveConfig() {
-        var genreID;
-        var radios = document.getElementsByName('options-genre2');
+        var genreID =[];
+        var checkboxes = document.getElementsByName('options-genre2');
 
         for (var i = 0, length = radios.length; i < length; i++) {
-            if (radios[i].checked) {
+            if (checkboxes[i].checked) {
                 // do whatever you want with the checked radio
-                genreID= radios[i].value;
-                break;
+                genreID.push(checkboxes[i].value);
             }
         }
         socket.emit("putAllowedGenres", genreID);

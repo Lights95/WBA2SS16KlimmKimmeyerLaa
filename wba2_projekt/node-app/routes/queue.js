@@ -142,6 +142,7 @@ router.delete('/', function(req, res){
 
 /*Updated die erlaubten Genres der Queue über eine Subressource*/
 router.put('/allowedGenres', function(req, res){
+    console.log(res);
     //entfernt nicht gewählte Genres
     db.keys('allowedGenres:*', function(err, res){
         //del kann nur auf nicht leere Elemente durchgeführt werden
