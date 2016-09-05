@@ -61,11 +61,13 @@ io.on('connection', function(socket){
     postSong(socket, data);
   });
 
+  /*socket.on('deleteSong', function(data){
+      deleteSong(socket, data);
+  });*/
+
   socket.on('putAllowedGenres', function(data){
     putAllowedGenres(socket, data);
   });
-
-
 
   /* ClientSocket bei Verbindungsabbruch aus der Socket-Liste entfernen */
   socket.on('disconnect', function(){
@@ -193,8 +195,6 @@ function sendAllowedGenres(socket) {
   externalRequest.end();
 }
 
-
-
 function postQueue(socket, data) {
   var options = {
       host: 'localhost',
@@ -300,6 +300,39 @@ function postArtist(socket, data) {
   externalRequest.end();
 }
 
+/**function deleteSong(socket, data) {
+  var options = {
+    host: 'localhost',
+    port: 3000,
+    path: '/api/genres/:id',
+    method: 'DElETE',
+    headers: {
+      "content-type": "application/json",
+    }
+  };
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.setEncoding('utf8');
+    if (externalResponse.statusCode == 204) {
+      externalResponse.on('data', function(chunk){
+        var chunkdata = JSON.parse(chunk);
+        sendMeldung(socket, "Genre gelöscht");
+
+        /*jedem Client die neuen Genres senden
+        clientSockets.forEach(function(clientSocket) {
+          sendSongs(clientSocket);
+        });
+      });
+    }
+    else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
+    externalResponse.on('error', function(e) {
+      sendMeldung(socket, "Error: "+e);
+    });
+  });
+  externalRequest.delete('{"genreID": '+data+' }');
+  externalRequest.end();
+} **/
+
 function postSong(socket, data) {
   var options = {
       host: 'localhost',
@@ -334,8 +367,6 @@ function postSong(socket, data) {
   externalRequest.end();
 }
 
-
-
 function putAllowedGenres(socket, data) {
   var options = {
       host: 'localhost',
@@ -355,7 +386,7 @@ function putAllowedGenres(socket, data) {
         var chunkdata = JSON.parse(chunk);
         sendMeldung(socket, "Genre geändert");
 
-        /*jedem Client die neue Queue senden*/
+        /*jedem Client die neuen Erlaubten Genres senden*/
         clientSockets.forEach(function(clientSocket) {
           sendAllowedGenres(clientSocket);
         });

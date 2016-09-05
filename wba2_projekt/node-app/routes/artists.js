@@ -16,7 +16,8 @@ var artistSchema={
         'name':{
             'type': 'string',
             //Zunächst nur 1 Artist, es dürften aber ab der 2. Projektphase durchaus mehrere sein
-            'maxProperties': 1
+            'maxProperties': 1,
+            'minLength': 2
         },
         /* Genres, welche ein Artist spielt, werden über die ID übergeben, beim Speichern eines neuen Artists wird diese dann aus der Genre- Datenbank geholt oder was noch nicht implementiert wurde, wird es als Genre neu erstellt. --> Einbindung in der 2. Projektphase*/ 
 

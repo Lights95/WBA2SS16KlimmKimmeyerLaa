@@ -13,7 +13,8 @@ var genreSchema={
     'properties': {
         'name':{
             'type': 'string',
-            'maxProperties': 1
+            'maxProperties': 1,
+            'minLength': 2
         }
     },
     'required': ['name']

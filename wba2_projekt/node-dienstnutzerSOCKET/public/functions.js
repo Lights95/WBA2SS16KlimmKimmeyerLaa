@@ -109,8 +109,12 @@
           document.getElementById("admin-addSong-genre-radios").innerHTML = " ";
           document.getElementById("admin-options-genre-radios").innerHTML = " ";
           for (var i = 0; i < data.length; i++) {
-            var newObject = document.createElement("li");
-            newObject.innerHTML = data[i].name+"("+data[i].id+")";
+            var newObject = document.createElement("label");
+            newObject.className ="mdl-radio mdl-js-radio mdl-js-ripple-effect";
+            newObject.setAttribute("for", "admin-delete-song"+data[i].id);
+            newObject.innerHTML =
+            '<input type="radio" id="admin-delete-song'+data[i].id+'" class="mdl-radio__button" name="options-genre3" value="'+data[i].id+'">'+
+            '<span class="mdl-radio__label">'+data[i].name+'<br></span>';
 
 
             var newObject2 = document.createElement("label");
@@ -125,7 +129,7 @@
             newObject3.className = "mdl-radio mdl-js-radio mdl-js-ripple-effect";
             newObject3.setAttribute("for", "admin-options-genre-radios__option-"+data[i].id);
             newObject3.innerHTML =
-            '<input type="radio" id="admin-options-genre-radios__option-'+data[i].id+'" class="mdl-radio__button" name="options-genre2" value="'+data[i].id+'">'+
+            '<input type="checkbox" id="admin-options-genre-radios__option-'+data[i].id+'" class="mdl-radio__button" name="options-genre2" value="'+data[i].id+'">'+
             '<span class="mdl-radio__label">'+data[i].name+'</span>';
 
 
@@ -218,13 +222,10 @@
         for (var i = 0, length = radios.length; i < length; i++) {
             if (radios[i].checked) {
                 // do whatever you want with the checked radio
-                genreID = radios[i].value;
-
-                // only one radio can be logically checked, don't check the rest
+                genreID= radios[i].value;
                 break;
             }
         }
-
         socket.emit("putAllowedGenres", genreID);
       }
 

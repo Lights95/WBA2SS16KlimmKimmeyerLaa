@@ -13,7 +13,8 @@ var songSchema={
     'properties': {
         'title':{
             'type': 'string',
-            'maxProperties': 1
+            'maxProperties': 1,
+            'minLength': 2
         },
         'artist': {
             'type': 'integer',
@@ -29,8 +30,6 @@ var songSchema={
 
 //Validierungsvariable
 var validate = ajv.compile(songSchema);
-
-
 
 /*Song erstellen: evtl. das ganze mit Sets lösen und falls das Genre oder der Artist nicht vorhanden ist, diesen neu Posten.*/
 router.post('/', function(req, res){
@@ -70,12 +69,12 @@ router.post('/', function(req, res){
                 if(rep){
                     song.artist=JSON.parse(rep).name;
                 }
-            
+
             db.get('genre:' +req.body.genre, function(err, ren){
                 if(ren){
                     song.genre= JSON.parse(ren).name;
                 }
-            
+
 
             /*Erstellt neuen Song in der Datenbank*/
             db.incr('songIDs', function(err, id){
@@ -90,8 +89,6 @@ router.post('/', function(req, res){
         });
     });
 });
-
-
 
 //Alle Songs ausgeben
 router.get('/', function(req, res){
@@ -126,7 +123,7 @@ router.put('/:id', function(req,res){
     });
 });
 
-//Bestimmten Song ausgeben 
+//Bestimmten Song ausgeben
 router.get('/:id', function(req, res){
    db.get('song:'+req.params.id, function(err,rep){
        if(rep){
