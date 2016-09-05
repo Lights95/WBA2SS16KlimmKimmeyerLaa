@@ -39,7 +39,7 @@
 
       function displayAllowedGenres(data){
         if(data.length === 0){
-          document.getElementById('allowedGenres').innerHTML = " ";
+          document.getElementById("allowedGenres").innerHTML = " ";
           document.getElementById("allowedGenres").innerHTML = "Alle";
         }else{
           document.getElementById("allowedGenres").innerHTML = " ";
@@ -239,7 +239,7 @@
         var genreID =[];
         var checkboxes = document.getElementsByName('options-genre2');
 
-        for (var i = 0, length = radios.length; i < length; i++) {
+        for (var i = 0, length = checkboxes.length; i < length; i++) {
             if (checkboxes[i].checked) {
                 // do whatever you want with the checked radio
                 genreID.push(checkboxes[i].value);

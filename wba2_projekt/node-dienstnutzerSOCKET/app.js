@@ -388,19 +388,18 @@ function putAllowedGenres(socket, data) {
       externalResponse.on('data', function(chunk){
         var chunkdata = JSON.parse(chunk);
         sendMeldung(socket, "Genres geändert");
-
         /*jedem Client die neuen Erlaubten Genres senden*/
         clientSockets.forEach(function(clientSocket) {
           sendAllowedGenres(clientSocket);
         });
       });
     }
-    else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
+    else sendMeldung(socket, "Fehler: " + externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);
     });
   });
-  externalRequest.write('{"genreID": '+data+'}');
+  externalRequest.write('{"genreID":['+ data +']}');
   externalRequest.end();
 }
 
