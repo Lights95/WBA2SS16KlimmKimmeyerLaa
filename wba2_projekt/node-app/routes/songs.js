@@ -93,6 +93,9 @@ router.post('/', function(req, res){
 
 //Alle Songs ausgeben
 router.get('/', function(req, res){
+  if(req.query.genre){
+    console.log(req.query.genre);
+  }
   db.keys('song:*', function(err,keys){
       if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
       else{
@@ -107,6 +110,8 @@ router.get('/', function(req, res){
           });
       }
   });
+
+
 });
 
 //Song bearbeiten- Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet

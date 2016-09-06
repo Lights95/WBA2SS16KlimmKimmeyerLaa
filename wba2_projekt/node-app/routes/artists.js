@@ -6,6 +6,7 @@ var router = express.Router();
 var db = redis.createClient();
 var Ajv = require('ajv');
 var ajv = Ajv({allErrors: true});
+var async = require('async');
 
 
 
@@ -19,7 +20,7 @@ var artistSchema={
             'maxProperties': 1,
             'minLength': 2
         },
-        /* Genres, welche ein Artist spielt, werden über die ID übergeben, beim Speichern eines neuen Artists wird diese dann aus der Genre- Datenbank geholt oder was noch nicht implementiert wurde, wird es als Genre neu erstellt. --> Einbindung in der 2. Projektphase*/ 
+        /* Genres, welche ein Artist spielt, werden über die ID übergeben, beim Speichern eines neuen Artists wird diese dann aus der Genre- Datenbank geholt oder was noch nicht implementiert wurde, wird es als Genre neu erstellt. --> Einbindung in der 2. Projektphase*/
 
         'genres':{
             'items':[
@@ -41,8 +42,12 @@ router.post('/', function(req, res){
     //Validierung des JSON- Objekts, welches über den Dienstnutzer gesendet wird. Abbruch bei falschem Schema
     var valid = validate(req.body);
     if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
+    //Variable zur Überprüfung, ob der neue Artist vorhanden ist.
+    var gesetzt= false;
 
     /*Erstellt ein Array aus Keys für alle Artists aus der DB*/
+    async.series([
+    function(callback){
     db.keys('artist:*', function(err, keys){
         /*Gibt alle Artists aus der DB zurück*/
         db.mget(keys, function(err, artists){
@@ -56,41 +61,39 @@ router.post('/', function(req, res){
                 return JSON.parse(artist);
             });
 
-            //Variable zur Überprüfung, ob der neue Artist vorhanden ist.
-            var gesetzt= false;
-
             /*Überprüft, ob der neue Artist vorhanden ist*/
-            artists.forEach(function(artist){
+            async.each(artists, function(artist, callback){
                 if(artist.name === req.body.name) {
                     gesetzt=true;
-                }
+                    console.log("should be 1");
+                    callback();
+                }else{
+                  console.log("can be 1");
+                return callback();}
             });
-
-            //Abbruch, falls Artist vorhanden ist
-            if(gesetzt){
-                return res.status(409).json({message : "Artist bereits vorhanden."});
-            }
-            
-            //Nach der ID des Genres wird in den Genres gesucht, wenn nichts gefunden wird.
-            var artist = {};
-            artist.name=req.body.name;
-                db.get('genre:' +req.body.genre, function(err, ren){
-                    if(ren){
-                        artist.genre= JSON.parse(ren).name;
-                    }
-                });
-            /*Erstellt neuen Artist in der Datenbank:
-            1.) ID wird automatisch generiert und bei jedem Eintrag inkrementiert
-            2.) Datenbankeintrag wird erstellt */
-            db.incr('artistIDs', function(err, id){
-                artist.id=id;
-                db.set('artist:' + artist.id, JSON.stringify(artist), function(err, newArtist){
-                    /*neuer Artist wird als JSON Objekt zurückgegeben*/
-                    res.status(201).json(artist);
-                });
-            });
+            console.log("should be 2");
+            callback();
         });
     });
+  }] ,function(err){
+    //Abbruch, falls Artist vorhanden ist
+    if(gesetzt){
+      return res.status(406).json({message : "Artist bereits vorhanden."});
+    }
+    var artist = {};
+    artist.name=req.body.name;
+    /*Erstellt neuen Artist in der Datenbank:
+    1.) ID wird automatisch generiert und bei jedem Eintrag inkrementiert
+    2.) Datenbankeintrag wird erstellt */
+    db.incr('artistIDs', function(err, id){
+      console.log(artist);
+      artist.id=id;
+      db.set('artist:' + artist.id, JSON.stringify(artist), function(err, newArtist){
+        /*neuer Artist wird als JSON Objekt zurückgegeben*/
+        res.status(201).json(artist);
+      });
+    });
+  });
 });
 
 //Artists ausgeben
@@ -147,7 +150,7 @@ router.get('/:id', function(req, res){
 
 //Artist löschen
 router.delete('/:id', function(req, res){
-    //Speichern der ID vom Request in der Variable id 
+    //Speichern der ID vom Request in der Variable id
     var id = req.params.id;
     //überprüft ob der Eintrag in der Datenbank vorhanden ist
     db.exists('artist:'+id, function(err,rep){

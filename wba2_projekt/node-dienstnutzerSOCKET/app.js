@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
+var mm = require('musicmetadata');
 
 var fs = require('fs');
 var http = require('http');
@@ -115,7 +116,7 @@ function sendGenres(socket) {
 
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
-    if (externalResponse.statusCode == 200) {
+    if (externalResponse.statusCode === 200) {
       externalResponse.on('data', function(chunk){
         var genredata = JSON.parse(chunk);
         socket.emit("resGenres", genredata);
@@ -138,7 +139,7 @@ function sendSongs(socket) {
 
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
-    if (externalResponse.statusCode == 200) {
+    if (externalResponse.statusCode === 200) {
       externalResponse.on('data', function(chunk){
         var songdata = JSON.parse(chunk);
         socket.emit("resSongs",songdata);
@@ -161,7 +162,7 @@ function sendArtists(socket) {
 
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
-    if (externalResponse.statusCode == 200) {
+    if (externalResponse.statusCode === 200) {
       externalResponse.on('data', function(chunk){
         var songdata = JSON.parse(chunk);
         socket.emit("resArtists",songdata);
@@ -184,7 +185,7 @@ function sendAllowedGenres(socket) {
 
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
-    if (externalResponse.statusCode == 200) {
+    if (externalResponse.statusCode === 200) {
       externalResponse.on('data', function(chunk){
         var genredata = JSON.parse(chunk);
         console.log(genredata);
@@ -209,7 +210,7 @@ function postQueue(socket, data) {
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
     externalResponse.setEncoding('utf8');
-    if (externalResponse.statusCode == 201) {
+    if (externalResponse.statusCode === 201) {
       externalResponse.on('data', function(chunk){
         var chunkdata = JSON.parse(chunk);
         sendMeldung(socket, "Zur Warteliste hinzugefügt");
@@ -220,10 +221,10 @@ function postQueue(socket, data) {
         });
       });
     }
-    else if(externalResponse.statusCode == 403){
+    else if(externalResponse.statusCode === 403){
         sendMeldung(socket, "Falsches Genre");
     }
-    else if(externalResponse.statusCode == 406){
+    else if(externalResponse.statusCode === 406){
         sendMeldung(socket, "Dieser Song ist bereits in der Queue!")
     }
     else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
@@ -249,7 +250,7 @@ function postGenre(socket, data) {
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
     externalResponse.setEncoding('utf8');
-    if (externalResponse.statusCode == 201) {
+    if (externalResponse.statusCode === 201) {
       externalResponse.on('data', function(chunk){
         var chunkdata = JSON.parse(chunk);
         sendMeldung(socket, "Genre hinzugefügt");
@@ -260,6 +261,7 @@ function postGenre(socket, data) {
         });
       });
     }
+    else if(externalResponse.statusCode === 406) sendMeldung(socket, "Genre bereits vorhanden.");
     else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);
@@ -283,7 +285,7 @@ function postArtist(socket, data) {
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
     externalResponse.setEncoding('utf8');
-    if (externalResponse.statusCode == 201) {
+    if (externalResponse.statusCode === 201) {
       externalResponse.on('data', function(chunk){
         var chunkdata = JSON.parse(chunk);
         sendMeldung(socket, "Artist hinzugefügt");
@@ -294,6 +296,7 @@ function postArtist(socket, data) {
         });
       });
     }
+    else if(externalResponse.statusCode === 406) sendMeldung(socket, "Dieser Artist ist bereits vorhanden!");
     else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);
@@ -361,6 +364,7 @@ function postSong(socket, data) {
         });
       });
     }
+    else if(externalResponse.statusCode === 406) sendMeldung(socket, "Dieser Song ist bereits vorhanden!")
     else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);
@@ -394,6 +398,7 @@ function putAllowedGenres(socket, data) {
         });
       });
     }
+    else if(externalResponse.statusCode === 409) sendMeldung(socket, "Zu viele Genres ausgewählt");
     else sendMeldung(socket, "Fehler: " + externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);

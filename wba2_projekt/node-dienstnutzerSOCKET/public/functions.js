@@ -104,8 +104,8 @@
             newAdminSonglistObject.className ="mdl-radioCustom mdl-js-radio mdl-js-ripple-effect";
             newAdminSonglistObject.setAttribute("for", "admin-delete-song"+data[i].id);
             newAdminSonglistObject.innerHTML =
-            '<input type="radio" id="admin-delete-song'+data[i].id+'" class="mdl-radio__button" name="options-artist1" value="'+data[i].id+'">'+
-            '<span class="mdl-radio__label">'+ data[i].title +"//<i>"+ data[i].artist+ "//"+ data[i].genre+ "</i><br></span>";
+            '<input type="radio" id="admin-delete-song'+data[i].id+'" class="mdl-radio__button" name="options-song" value="'+data[i].id+'">'+
+            '<span class="mdl-radio__label">'+ data[i].title +"-<i>"+ data[i].artist+ "//"+ data[i].genre+ "</i><br></span>";
 
             document.getElementById("songs").appendChild(newSonglistObject);
             document.getElementById("admin-song-list").appendChild(newAdminSonglistObject);
@@ -137,7 +137,7 @@
             newObject2.className = "mdl-radio mdl-js-radio mdl-js-ripple-effect";
             newObject2.setAttribute("for", "admin-addSong-genre-radios__option-"+data[i].id);
             newObject2.innerHTML =
-            '<input type="radio" id="admin-addSong-genre-radios__option-"'+ data[i].id + ' class="mdl-radio__button" name="options-genre1" value="'+data[i].id+'">'+
+            '<input type="radio" id="admin-addSong-genre-radios__option-'+ data[i].id +'" class="mdl-radio__button" name="options-genre1" value="'+data[i].id+'">'+
             '<span class="mdl-radio__label">'+data[i].name+'</span>';
 
 
@@ -166,6 +166,7 @@
           document.getElementById("admin-artist-list").innerHTML = " ";
           document.getElementById("admin-addSong-artist-radios").innerHTML = " ";
           for (var i = 0; i < data.length; i++) {
+
             var newObject = document.createElement("label");
             newObject.className ="mdl-radioCustom mdl-js-radio mdl-js-ripple-effect";
             newObject.setAttribute("for", "admin-delete-artist"+data[i].id);
@@ -199,6 +200,9 @@
       function addGenre() {
         socket.emit("postGenre", document.getElementById("genre_bezeichnung").value);
       }
+
+      // create a new parser from a node ReadStream
+
 
       function addSong() {
         var title = document.getElementById("song_title").value;

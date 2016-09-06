@@ -7,6 +7,7 @@ var redis = require('redis');
 var router = express.Router();
 var db = redis.createClient();
 var ajv = Ajv({allErrors: true});
+var async = require('async');
 
 //Datenhaltung von Genre wird definiert
 var genreSchema={
@@ -24,68 +25,71 @@ var genreSchema={
 var validate = ajv.compile(genreSchema);
 
 /*Genres*/
-
 router.post('/', function(req, res){
-    //Validierung des Datentyps
-    var valid = validate(req.body);
-    if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
+  //Validierung des Datentyps
+  var valid = validate(req.body);
+  if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
+  var gesetzt= false;
 
-    /*Filtert alle Genres*/
-    db.keys('genre:*', function(err, keys){
+  /*Filtert alle Genres*/
+  async.series([
+    function(callback){
+      db.keys('genre:*', function(err, keys){
         /*Gibt alle Genres aus der DB zurück*/
         db.mget(keys, function(err, genres){
-            /*Überprüft, ob Variable einen Wert hat*/
-            if(genres===undefined){
-                genres =[];
-            }
-            /*Gibt neues Array an User zurück, welches alle User enthält*/
-            genres=genres.map(function(genre){
-                return JSON.parse(genre);
-            });
-            var gesetzt= false;
-
-            /*Überprüft, ob der neue Nutzername vorhanden ist*/
-            genres.forEach(function(genre){
-                if(genre.name === req.body.name) {
-                    gesetzt=true;
-                }
-            });
-
-
-            if(gesetzt){
-                return res.status(406).json({message : "Genre bereits vorhanden."});
-            }
-            /*Erstellt neues Genre in der Datenbank*/
-            db.incr('genreID', function(err, id){
-                var genre = req.body;
-                genre.id=id;
-                db.set('genre:' + genre.id, JSON.stringify(genre), function(err, newGenre){
-                    /*neues Genre wird als JSON Objektzurückgegeben*/
-                    res.status(201).json(genre);
-                });
-            });
+          /*Überprüft, ob Variable einen Wert hat*/
+          if(genres===undefined){
+            genres =[];
+          }
+          /*Gibt neues Array an User zurück, welches alle User enthält*/
+          genres=genres.map(function(genre){
+            return JSON.parse(genre);
+          });
+          
+          /*Überprüft, ob der neue Nutzername vorhanden ist*/
+          async.each(genres, function(genre, callback){
+            if(genre.name === req.body.name) {
+              gesetzt=true;
+              callback();
+            }else return callback();
+          });
+          callback();
         });
-    });
+      });
+    }], function(err){
+      if(gesetzt){
+        return res.status(406).json({message : "Genre bereits vorhanden."});
+      }
+      /*Erstellt neues Genre in der Datenbank*/
+      db.incr('genreID', function(err, id){
+        var genre = req.body;
+        genre.id=id;
+        db.set('genre:' + genre.id, JSON.stringify(genre), function(err, newGenre){
+          /*neues Genre wird als JSON Objektzurückgegeben*/
+          res.status(201).json(genre);
+        });
+      });
+  });
 });
+
 
 //Genre ausgeben
 router.get('/', function(req, res){
-    db.keys('genre:*', function(err,keys){
+  db.keys('genre:*', function(err,keys){
+    if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
+    else{
+      db.mget(keys, function(err, genres){
         if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
         else{
-            db.mget(keys, function(err, genres){
-                if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
-                else{
-                    genres=genres.map(function(genre){
-                        return JSON.parse(genre);
-                    });
-                    res.status(200).json(genres);
-                }
-            });
+          genres=genres.map(function(genre){
+            return JSON.parse(genre);
+          });
+          res.status(200).json(genres);
         }
-    });
+      });
+    }
+  });
 });
-
 
 //Einzelnes Genre bearbeiten
 router.put('/:id', function(req,res){
@@ -101,7 +105,6 @@ router.put('/:id', function(req,res){
         else res.status(404).type('plain').send('Das Genre mit der ID ' + req.params.id + ' ist nicht vorhanden.');
     });
 });
-
 
 /*Bestimmtes Genre ausgeben*/
 router.get('/:id', function(req, res){

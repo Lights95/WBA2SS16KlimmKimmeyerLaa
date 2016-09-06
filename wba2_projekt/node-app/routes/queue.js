@@ -124,6 +124,7 @@ router.post('/', function(req, res){
   });
 
   //Warteschlange ausgeben
+
 router.get('/', function(req, res){
   db.lrange('queue', 0, 100, function(err, songs){
     if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
@@ -167,7 +168,7 @@ router.put('/allowedGenres', function(req, res){
 
   var valid = validate2(req.body);
   //Validierung
-  if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
+  if(!valid) return res.status(409).json({message: "Ungültiges Schema!"});
   var genreID = req.body.genreID;
   var allowedGenres = [];
 
@@ -180,8 +181,6 @@ router.put('/allowedGenres', function(req, res){
       callback();
     });
   },  function(err){
-    if(err)res.status(404);
-    else{
     //zweites mal der Callbackhölle entkommen
       async.each(allowedGenres, function(genre, callback){
         db.incr('aGID', function(err,id){
@@ -193,7 +192,7 @@ router.put('/allowedGenres', function(req, res){
         if(err)res.status(404);
         else res.status(201).json(allowedGenres);
       });
-  }});
+  });
 });
 
 router.get('/allowedGenres', function(req,res){
