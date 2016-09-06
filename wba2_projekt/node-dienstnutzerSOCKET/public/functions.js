@@ -8,6 +8,7 @@
       socket.emit("getGenres");
       socket.emit("getArtists");
       socket.emit("getAllowedGenres");
+      socket.emit("getPassword");
 
       /*Bei empfangen der Daten*/
       socket.on('resQueue', function(data){

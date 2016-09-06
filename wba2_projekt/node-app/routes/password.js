@@ -35,7 +35,7 @@ router.get('/', function(req, res){
           res.status(200).type('json').send(rep);
       }
       else{
-        var pass="HALLOHA";
+        var pass={"pass":"HALLOHA"};
         db.set('password:' + "admin" , JSON.stringify(pass), function(err,rep){
           if(err) res.status(400).mess("Something went wront");
           else res.status(201).json(pass);
