@@ -246,12 +246,10 @@ function sendAllowedGenres(socket) {
     if (externalResponse.statusCode === 200) {
       externalResponse.on('data', function(chunk){
         var genredata = JSON.parse(chunk);
-        console.log(genredata);
         socket.emit("resAllowedGenres", genredata);
       });
     }
     if (externalResponse.statusCode === 204) {
-      console.log("ok but empty");
       var genredata = [];
       socket.emit("resAllowedGenres", genredata);
     }

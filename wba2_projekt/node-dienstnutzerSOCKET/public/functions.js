@@ -21,7 +21,6 @@
       });
 
       socket.on('resFilteredSongs', function(data){
-        console.log("hi");
         displaySongsFiltered(data);
       });
 
