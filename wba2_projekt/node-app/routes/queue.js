@@ -151,6 +151,7 @@ router.delete('/', function(req, res){
           db.llen('queue', function(err,rep){
             if(rep===0){
               randomSongAdden();
+              res.status(201).send('Added new Song successful!');
             }else
               res.status(204).send('Song aus der Warteschlange erfolgreich gelöscht.');
           });
@@ -162,6 +163,7 @@ router.delete('/', function(req, res){
   function randomSongAdden(){
     var aGenres=[];
     var songsSorted = [];
+    var queueEntry={};
     async.series([
       function(callback){
         db.keys('allowedGenres:*', function(err, keys){
@@ -190,8 +192,8 @@ router.delete('/', function(req, res){
             else{
               async.each(songs, function(song, callback){
                 async.each(aGenres, function(genreAllowed, callback){
-                  console.log(genreAllowed.name);
-                  if((JSON.parse(song)).genre === genreAllowed.name){
+                  console.log(genreAllowed.name + "HAHA");
+                  if((JSON.parse(song)).genre === genreAllowed.name|| aGenres.length===0){
                     songsSorted.push(JSON.parse(song));
                     callback();
                   }
@@ -199,14 +201,17 @@ router.delete('/', function(req, res){
                 });
               callback();
               });
+              callback();
             }
           });
-          callback();
+
         }
       });
     },
       //Holt das Songobjekt als komplettes Objekt heran, bis auf die Songid und speichert dies in Songentry
     function(callback){
+      console.log(songsSorted);
+      console.log(Math.floor(Math.random() * songsSorted.length) + "Random Key to happiness");
       var rand = songsSorted[Math.floor(Math.random() * songsSorted.length)];
       console.log(rand);
       db.get('song:' + rand.id, function(err, ren){
@@ -224,7 +229,7 @@ router.delete('/', function(req, res){
           /*Erstellt neuen Warteschlangeneintrag in der Datenbank*/
           db.rpush('queue', JSON.stringify(queueEntry), function(err, newOrder){
             /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/
-            return res.status(201).json(queueEntry);
+            return console.log("Success");
           });
         });
       }
