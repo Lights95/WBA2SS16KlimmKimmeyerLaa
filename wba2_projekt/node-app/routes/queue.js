@@ -38,7 +38,7 @@ var validate = ajv.compile(queueSchema);
 var validate2 = ajv.compile(allowedSchema);
 
 //neues Lied an der Queue anhängen
-router.post('/', function(req, res){
+router.post('/', function testItNow(req, res){
   var inQueue    = false;
   var allowed  = false;
   var queueEntry = {};
@@ -91,7 +91,10 @@ router.post('/', function(req, res){
           genres=genres.map(function(genre){
             return JSON.parse(genre);
           });
-
+          if(genres.length===0){
+            allowed=true;
+            return callback();
+          }
           async.each(genres, function(genre, callback){
             if(queueEntry.genre === genre.name){
               allowed=true;
@@ -143,12 +146,94 @@ router.delete('/', function(req, res){
   db.llen('queue', function(err,rep){
     if(rep===0)res.status(404).type('plain').send('Es ist exitiert kein Song in der Warteschlange');
     else{
-      db.lpop('queue' ,function (err, rep) {
-        res.status(204).send('Song aus der Warteschlange erfolgreich gelöscht.');
-      });
-    }
+
+        db.lpop('queue' ,function (err, rep) {
+          //if(db.llen('queue')===1){
+            //randomSongAdden(Math.floor((Math.random()* db.)))
+          //}else
+            res.status(204).send('Song aus der Warteschlange erfolgreich gelöscht.');
+        });
+      }
   });
 });
+
+  /**function randomSongAdden(id){
+    async.series([
+      //Holt das Songobjekt als komplettes Objekt heran, bis auf die Songid und speichert dies in Songentry
+      function(callback){
+        db.get('song:' + req.body.id, function(err, ren){
+          queueEntry.title  = JSON.parse(ren).title;
+          queueEntry.artist = JSON.parse(ren).artist;
+          queueEntry.genre  = JSON.parse(ren).genre;
+          queueEntry.id     = req.body.id;
+
+          callback();
+        });
+      },
+      //Gibt die ersten 10 Einträge der queue zurück - Ab hier wird geguckt, ob der Song schon in der Queue ist
+      function(callback){
+        db.lrange('queue',0,10,function (err,songs){
+          if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
+          //speichert Einträge als neues Array in songs, geparst
+          songs=songs.map(function(song){
+            return JSON.parse(song);
+          });
+
+
+          /*Überprüft, ob der neue Song vorhanden ist
+          async.each(songs, function(song, callback){
+            if(song.id === queueEntry.id) {
+              inQueue=true;
+              callback();
+            }
+            else return callback();
+          });
+          callback();
+          //Bis hierhin wird geguckt, ob der Song schon in der Queue ist
+        });
+      },
+      //Aufgrund der Callbackhölle, ist das ganze sehr verschachtelt aufgebaut worden - Ab hier wird überprüft, ob das Genre des Songs erlaubt ist.
+      function(callback){
+        db.keys('allowedGenres:*', function(err, keys){
+          if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
+          db.mget(keys, function(err, genres){
+            if(genres===undefined) genres=[];
+            genres=genres.map(function(genre){
+              return JSON.parse(genre);
+            });
+
+            async.each(genres, function(genre, callback){
+              if(queueEntry.genre === genre.name){
+                allowed=true;
+                callback();
+              }else return callback();
+            });
+            callback();
+          });
+        });
+      },
+      function(err){
+        if(!allowed){
+          return res.status(403).json({message: 'Genre dieses Songs passt nicht zur Party.'});
+        }
+        else if(inQueue){
+          return res.status(406).json({message : 'Der Song ist schon in der Queue.'});
+        }
+        else{
+          //queueNumber jedes Mal erhöht
+          db.incr('queueNumber',function(err, id){
+            queueEntry.queueNumber = id;
+            /*Erstellt neuen Warteschlangeneintrag in der Datenbank
+            db.rpush('queue', JSON.stringify(queueEntry), function(err, newOrder){
+              /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben
+              return res.status(201).json(queueEntry);
+            });
+          });
+        }
+      }]);
+    });
+  };
+  */
 
   //Verwendung von allowedGenres als Subressource zur Primärressource Queue
 
