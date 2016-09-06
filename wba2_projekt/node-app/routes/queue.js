@@ -39,7 +39,6 @@ var validate2 = ajv.compile(allowedSchema);
 
 //neues Lied an der Queue anhängen
 router.post('/', function testItNow(req, res){
-  console.log(req);
   var inQueue    = false;
   var allowed  = false;
   var queueEntry = {};
@@ -92,7 +91,10 @@ router.post('/', function testItNow(req, res){
           genres=genres.map(function(genre){
             return JSON.parse(genre);
           });
-
+          if(genres.length===0){
+            allowed=true;
+            return callback();
+          }
           async.each(genres, function(genre, callback){
             if(queueEntry.genre === genre.name){
               allowed=true;
@@ -146,17 +148,16 @@ router.delete('/', function(req, res){
     else{
 
         db.lpop('queue' ,function (err, rep) {
-          if(db.llen('queue')===1){
-            randomSongAdden(Math.floor((Math.random()* db.)))
-          }else{
+          //if(db.llen('queue')===1){
+            //randomSongAdden(Math.floor((Math.random()* db.)))
+          //}else
             res.status(204).send('Song aus der Warteschlange erfolgreich gelöscht.');
         });
       }
-    }
   });
 });
 
-  function randomSongAdden(id){
+  /**function randomSongAdden(id){
     async.series([
       //Holt das Songobjekt als komplettes Objekt heran, bis auf die Songid und speichert dies in Songentry
       function(callback){
@@ -179,7 +180,7 @@ router.delete('/', function(req, res){
           });
 
 
-          /*Überprüft, ob der neue Song vorhanden ist*/
+          /*Überprüft, ob der neue Song vorhanden ist
           async.each(songs, function(song, callback){
             if(song.id === queueEntry.id) {
               inQueue=true;
@@ -222,9 +223,9 @@ router.delete('/', function(req, res){
           //queueNumber jedes Mal erhöht
           db.incr('queueNumber',function(err, id){
             queueEntry.queueNumber = id;
-            /*Erstellt neuen Warteschlangeneintrag in der Datenbank*/
+            /*Erstellt neuen Warteschlangeneintrag in der Datenbank
             db.rpush('queue', JSON.stringify(queueEntry), function(err, newOrder){
-              /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/
+              /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben
               return res.status(201).json(queueEntry);
             });
           });
@@ -232,6 +233,7 @@ router.delete('/', function(req, res){
       }]);
     });
   };
+  */
 
   //Verwendung von allowedGenres als Subressource zur Primärressource Queue
 
