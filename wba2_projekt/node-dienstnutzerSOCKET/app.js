@@ -78,6 +78,10 @@ io.on('connection', function(socket){
     putAllowedGenres(socket, data);
   });
 
+  socket.on('putPassword', function(data){
+    putPassword(socket, data);
+  });
+
   /* ClientSocket bei Verbindungsabbruch aus der Socket-Liste entfernen */
   socket.on('disconnect', function(){
     console.log("Verbindung mit Webapp abgebrochen!");
@@ -457,6 +461,39 @@ function putAllowedGenres(socket, data) {
   externalRequest.write('{"genreID":['+ data +']}');
   externalRequest.end();
 }
+
+
+function putPassword(socket, data) {
+  var options = {
+    host: 'localhost',
+    port: 3000,
+    path: '/api/password',
+    method: 'PUT',
+    headers: {
+      "content-type": "application/json",
+    }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.setEncoding('utf8');
+    if (externalResponse.statusCode === 201) {
+      externalResponse.on('data', function(chunk){
+        var chunkdata = JSON.parse(chunk);
+        sendMeldung(socket, "Passwort geändert");
+      });
+    }
+    else if(externalResponse.statusCode === 406) sendMeldung(socket, "Bitte mindestens 6 Zeichen");
+    else sendMeldung(socket, "Fehler: " + externalResponse.statusCode);
+    externalResponse.on('error', function(e) {
+      sendMeldung(socket, "Error: "+e);
+    });
+  });
+  externalRequest.write('{"pass": "'+ data +'"}');
+  externalRequest.end();
+}
+
+
 
 function deleteFirstQueueItem(socket) {
   var options = {

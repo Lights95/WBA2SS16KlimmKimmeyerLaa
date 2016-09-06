@@ -303,6 +303,7 @@
           if (data.pass === value) {
             document.getElementById('admin-panel').classList.remove("display-none");
             document.getElementById('login-panel').classList.add("display-none");
+            document.getElementById('passwort').value = data.pass;
           }
         });
       }
@@ -317,6 +318,8 @@
                 genreID.push(checkboxes[i].value);
             }
         }
+        var password = document.getElementById("passwort").value;
+        socket.emit("putPassword", password);
         socket.emit("putAllowedGenres", genreID);
       }
 
