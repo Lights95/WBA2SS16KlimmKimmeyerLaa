@@ -75,7 +75,7 @@
             '</header>'+
             '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
               '<div class="mdl-card__supporting-text">'+
-                '<h4>#'+data[i].queueNumber+' '+data[i].title+' '+note+'</h4>'+
+                '<h4>#'+(i+1)+' '+data[i].title+' '+note+'</h4>'+
                 'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
               '</div>'+
             '</div>';
@@ -162,12 +162,9 @@
           document.getElementById("admin-addSong-genre-radios").innerHTML = " ";
           document.getElementById("admin-options-genre-radios").innerHTML = " ";
           for (var i = 0; i < data.length; i++) {
-            var newObject = document.createElement("label");
-            newObject.className ="mdl-radioCustom mdl-js-radio mdl-js-ripple-effect";
-            newObject.setAttribute("for", "admin-delete-genre"+data[i].id);
+            var newObject = document.createElement("li");
             newObject.innerHTML =
-            '<input type="radio" id="admin-delete-genre'+data[i].id+'" class="mdl-radio__button" name="options-genre3" value="'+data[i].id+'">'+
-            '<span class="mdl-radio__label">'+data[i].name + "(" +data[i].id+ ")<br></span>";
+            data[i].name + "(" +data[i].id+ ")<br>";
 
 
             var newObject2 = document.createElement("label");
@@ -204,12 +201,8 @@
           document.getElementById("admin-addSong-artist-radios").innerHTML = " ";
           for (var i = 0; i < data.length; i++) {
 
-            var newObject = document.createElement("label");
-            newObject.className ="mdl-radioCustom mdl-js-radio mdl-js-ripple-effect";
-            newObject.setAttribute("for", "admin-delete-artist"+data[i].id);
-            newObject.innerHTML =
-            '<input type="radio" id="admin-delete-artist'+data[i].id+'" class="mdl-radio__button" name="options-artist1" value="'+data[i].id+'">'+
-            '<span class="mdl-radio__label">'+data[i].name + "(" +data[i].id+ ")<br></span>";
+            var newObject = document.createElement("li");
+            newObject.innerHTML = data[i].name + "(" +data[i].id+ ")<br>";
 
             var newObject2 = document.createElement("label");
             newObject2.className = "mdl-radio mdl-js-radio mdl-js-ripple-effect";
