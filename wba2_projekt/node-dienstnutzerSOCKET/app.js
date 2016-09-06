@@ -517,6 +517,13 @@ function deleteFirstQueueItem(socket) {
         sendQueue(clientSocket);
       });
     }
+    else if (externalResponse.statusCode === 201) {
+      sendMeldung(socket, "Random Song");
+      /*jedem Client die neue Queue senden*/
+      clientSockets.forEach(function(clientSocket) {
+        sendQueue(clientSocket);
+      });
+    }
     else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
     externalResponse.on('error', function(e) {
       sendMeldung(socket, "Error: "+e);
