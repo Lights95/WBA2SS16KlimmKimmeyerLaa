@@ -94,7 +94,31 @@ router.post('/', function(req, res){
 //Alle Songs ausgeben
 router.get('/', function(req, res){
   if(req.query.genre){
-    
+    var genres = [];
+    genres = req.query.genre.split(',');
+    var songsSorted =[];
+
+    db.keys('song:*', function(err,keys){
+        if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
+        else{
+          db.mget(keys, function(err, songs){
+            if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+            else{
+              async.each(songs, function(song, callback){
+                async.each(genres, function(genreAllowed, callback){
+                  if((JSON.parse(song)).genre === genreAllowed){
+                    songsSorted.push(JSON.parse(song));
+                    callback();
+                  }
+                  else return callback();
+                });
+                callback();
+              });
+              res.status(200).json(songsSorted);
+            }
+          });
+        }
+    });
   }
   else{
     db.keys('song:*', function(err,keys){
