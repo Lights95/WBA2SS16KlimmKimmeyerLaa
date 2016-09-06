@@ -38,6 +38,7 @@
       });
 
       function displayAllowedGenres(data){
+        console.log(data.length);
         if(data.length === 0){
           document.getElementById("allowedGenres").innerHTML = " ";
           document.getElementById("allowedGenres").innerHTML = "Alle";

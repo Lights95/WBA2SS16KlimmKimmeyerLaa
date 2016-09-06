@@ -192,6 +192,11 @@ function sendAllowedGenres(socket) {
         socket.emit("resAllowedGenres", genredata);
       });
     }
+    if (externalResponse.statusCode === 204) {
+      console.log("ok but empty");
+      var genredata = [];
+      socket.emit("resAllowedGenres", genredata);
+    }
   });
   externalRequest.end();
 }
