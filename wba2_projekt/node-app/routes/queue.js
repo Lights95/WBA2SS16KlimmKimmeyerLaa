@@ -189,7 +189,7 @@ router.put('/allowedGenres', function(req, res){
           });
         });
       }, function(err){
-        if(err)res.status(204);
+        if(err)res.status(406);
         else res.status(201).json(allowedGenres);
       });
   });
@@ -197,7 +197,7 @@ router.put('/allowedGenres', function(req, res){
 
 router.get('/allowedGenres', function(req,res){
   db.keys('allowedGenres:*', function(err,keys){
-    if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+    if(err)res.status(204).type('plain').send('No Content');
     else{
       db.mget(keys, function(err, aG){
         if(err)res.status(404).type('plain').send('Error beim Auslesen.');
