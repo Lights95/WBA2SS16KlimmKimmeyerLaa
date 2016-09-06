@@ -195,10 +195,8 @@ router.delete('/', function(req, res){
                 }
                 else{
                   async.each(aGenres, function(genreAllowed, callback){
-                    console.log(aGenres.length)
                     if((JSON.parse(song)).genre === genreAllowed.name){
                       songsSorted.push(JSON.parse(song));
-                      console.log(songsSorted);
                       callback();
                     }
                     else return callback();
