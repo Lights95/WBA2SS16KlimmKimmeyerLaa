@@ -166,7 +166,7 @@ router.delete('/', function(req, res){
     async.series([
       function(callback){
         db.keys('allowedGenres:*', function(err, keys){
-          if(err) return callback();
+          if(err) return aGenres && callback();
           else{
             db.mget(keys, function(err, genres){
               if(err) return callback();
@@ -189,14 +189,21 @@ router.delete('/', function(req, res){
             if(err)return callback();
             else{
               async.each(songs, function(song, callback){
-                async.each(aGenres, function(genreAllowed, callback){
-                  if((JSON.parse(song)).genre === genreAllowed.name|| aGenres.length===0){
-                    songsSorted.push(JSON.parse(song));
-                    callback();
-                  }
-                  else return callback();
-                });
-              callback();
+                if(aGenres.length===0){
+                  songsSorted.push(JSON.parse(song));
+                  callback();
+                }
+                else{
+                  async.each(aGenres, function(genreAllowed, callback){
+                    console.log(aGenres.length)
+                    if((JSON.parse(song)).genre === genreAllowed.name){
+                      songsSorted.push(JSON.parse(song));
+                      console.log(songsSorted);
+                      callback();
+                    }
+                    else return callback();
+                  });
+                }
               });
               callback();
             }
