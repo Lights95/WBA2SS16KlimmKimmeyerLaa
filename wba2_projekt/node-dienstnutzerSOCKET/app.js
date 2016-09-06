@@ -45,6 +45,10 @@ io.on('connection', function(socket){
     sendAllowedGenres(socket);
   });
 
+  socket.on('getPassword', function(){
+    sendPassword(socket);
+  });
+
   /*Verarbeite Daten*/
   socket.on('postQueue', function(data){
     postQueue(socket, data);
@@ -66,6 +70,10 @@ io.on('connection', function(socket){
     deleteSong(socket, data);
   });
 
+  socket.on('deleteFirstQueueItem', function(){
+    deleteFirstQueueItem(socket);
+  });
+
   socket.on('putAllowedGenres', function(data){
     putAllowedGenres(socket, data);
   });
@@ -82,6 +90,28 @@ io.on('connection', function(socket){
 httpServer.listen(port);
 
 /*API Functions*/
+function sendPassword(socket) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/password',
+      method: 'GET',
+      headers: {
+        accept: 'application/json'
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.on('data', function(chunk){
+      var pwdata = JSON.parse(chunk);
+      socket.emit("resPassword",pwdata);
+    });
+  });
+  externalRequest.end();
+}
+
+
 function sendQueue(socket) {
   var options = {
       host: 'localhost',
@@ -405,6 +435,34 @@ function putAllowedGenres(socket, data) {
   externalRequest.write('{"genreID":['+ data +']}');
   externalRequest.end();
 }
+
+function deleteFirstQueueItem(socket) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/queue',
+      method: 'DELETE'
+  };
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.setEncoding('utf8');
+    if (externalResponse.statusCode === 204) {
+      sendMeldung(socket, "Song wird gespielt");
+
+      /*jedem Client die neue Queue senden*/
+      clientSockets.forEach(function(clientSocket) {
+        sendQueue(clientSocket);
+      });
+    }
+    else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
+    externalResponse.on('error', function(e) {
+      sendMeldung(socket, "Error: "+e);
+    });
+  });
+  externalRequest.end();
+}
+
+
 
 function sendMeldung(socket, meldung) {
   socket.emit("resMeldung",meldung);

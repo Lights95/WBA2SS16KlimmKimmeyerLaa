@@ -206,3 +206,16 @@ html, body {
 .mdl-demo .mdl-menu__container {
   z-index: 99;
 }
+
+.mdl-demo #next-song.mdl-color--teal-100:hover {
+  background-color: #9A7AD9; !important
+  cursor: pointer;
+}
+
+.display {
+  display: block;
+}
+
+.display-none {
+  display: none;
+}

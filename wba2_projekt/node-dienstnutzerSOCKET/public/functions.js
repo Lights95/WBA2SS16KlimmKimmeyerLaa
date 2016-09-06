@@ -60,8 +60,12 @@
             else note = '';
             var newQueueObject = document.createElement("section");
             newQueueObject.className = "section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp";
+            var stringJS = "";
+            if (i==(0)) {
+              stringJS= 'onclick="playSong();" id="next-song"';
+            }
             newQueueObject.innerHTML =
-            '<header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">' +
+            '<header ' + stringJS + ' class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">' +
               '<i class="material-icons">play_circle_filled</i>'+
             '</header>'+
             '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
@@ -251,8 +255,23 @@
                 break;
             }
         }
-        
+
         socket.emit("deleteSong", songID);
+      }
+
+      function playSong() {
+        socket.emit("deleteFirstQueueItem");
+      }
+
+      function login() {
+        var value = document.getElementById('access').value
+        socket.emit("getPassword");
+        socket.on('resPassword', function(data){
+          if (data.pass === value) {
+            document.getElementById('admin-panel').classList.remove("display-none");
+            document.getElementById('login-panel').classList.add("display-none");
+          }
+        });
       }
 
       function saveConfig() {
