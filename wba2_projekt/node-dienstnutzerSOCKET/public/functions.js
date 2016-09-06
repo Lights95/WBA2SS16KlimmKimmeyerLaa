@@ -3,12 +3,12 @@
       var socket = io.connect('http://localhost:8080');
 
       /*Anfordern der Daten*/
+      socket.emit("getPassword");
       socket.emit("getQueue");
       socket.emit("getSongs");
       socket.emit("getGenres");
       socket.emit("getArtists");
       socket.emit("getAllowedGenres");
-      socket.emit("getPassword");
 
       /*Bei empfangen der Daten*/
       socket.on('resQueue', function(data){
