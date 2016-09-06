@@ -35,7 +35,11 @@ router.get('/', function(req, res){
           res.status(200).type('json').send(rep);
       }
       else{
-          res.status(404).type('plain').send('Kein Passwort vorhanden.');
+        var pass="HALLOHA";
+        db.set('password:' + "admin" , JSON.stringify(pass), function(err,rep){
+          if(err) res.status(400).mess("Something went wront");
+          else res.status(201).json(pass);
+        });
       }
   });
 });
