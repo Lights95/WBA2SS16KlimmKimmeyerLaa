@@ -189,7 +189,7 @@ router.put('/allowedGenres', function(req, res){
           });
         });
       }, function(err){
-        if(err)res.status(404);
+        if(err)res.status(204);
         else res.status(201).json(allowedGenres);
       });
   });
