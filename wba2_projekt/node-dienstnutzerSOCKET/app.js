@@ -31,6 +31,7 @@ io.on('connection', function(socket){
 
   socket.on('getSongs', function(){
     sendSongs(socket);
+    sendSortedSongs(socket);
   });
 
   socket.on('getGenres', function(){
@@ -176,14 +177,15 @@ function sendSongs(socket) {
     if (externalResponse.statusCode === 200) {
       externalResponse.on('data', function(chunk){
         var songdata = JSON.parse(chunk);
-        socket.emit("resFilteredSongs",songdata);
+        socket.emit("resSongs",songdata);
       });
     }
   });
   externalRequest.end();
+}
 
-  //Filtered Songs
-  options = {
+function sendSortedSongs(socket) {
+  var options = {
       host: 'localhost',
       port: 3000,
       path: '/api/songs/validSongs',
@@ -383,6 +385,7 @@ function deleteSong(socket, data) {
       /*jedem Client die neue Queue senden*/
       clientSockets.forEach(function(clientSocket) {
         sendSongs(clientSocket);
+        sendSortedSongs(clientSocket);
       });
     }
     else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
@@ -415,6 +418,7 @@ function postSong(socket, data) {
         /*jedem Client die neue Queue senden*/
         clientSockets.forEach(function(clientSocket) {
           sendSongs(clientSocket);
+          sendSortedSongs(clientSocket);
         });
       });
     }

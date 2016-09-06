@@ -21,7 +21,7 @@
       });
 
       socket.on('resFilteredSongs', function(data){
-        document.getElementById("songsInDB").innerHTML = data.length;
+        console.log("hi");
         displaySongsFiltered(data);
       });
 
