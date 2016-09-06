@@ -62,9 +62,9 @@ io.on('connection', function(socket){
     postSong(socket, data);
   });
 
-  /*socket.on('deleteSong', function(data){
-      deleteSong(socket, data);
-  });*/
+  socket.on('deleteSong', function(data){
+    deleteSong(socket, data);
+  });
 
   socket.on('putAllowedGenres', function(data){
     putAllowedGenres(socket, data);
@@ -311,28 +311,22 @@ function postArtist(socket, data) {
   externalRequest.end();
 }
 
-/**function deleteSong(socket, data) {
+function deleteSong(socket, data) {
   var options = {
-    host: 'localhost',
-    port: 3000,
-    path: '/api/genres/:id',
-    method: 'DElETE',
-    headers: {
-      "content-type": "application/json",
-    }
+      host: 'localhost',
+      port: 3000,
+      path: '/api/songs/'+data,
+      method: 'DELETE'
   };
   var externalRequest = http.request(options, function(externalResponse){
     console.log('Verbindung mit Webservice hergestellt!');
     externalResponse.setEncoding('utf8');
-    if (externalResponse.statusCode == 204) {
-      externalResponse.on('data', function(chunk){
-        var chunkdata = JSON.parse(chunk);
-        sendMeldung(socket, "Genre gelöscht");
+    if (externalResponse.statusCode === 204) {
+      sendMeldung(socket, "Song gelöscht");
 
-        /*jedem Client die neuen Genres senden
-        clientSockets.forEach(function(clientSocket) {
-          sendSongs(clientSocket);
-        });
+      /*jedem Client die neue Queue senden*/
+      clientSockets.forEach(function(clientSocket) {
+        sendSongs(clientSocket);
       });
     }
     else sendMeldung(socket, "Fehler: "+externalResponse.statusCode);
@@ -340,9 +334,8 @@ function postArtist(socket, data) {
       sendMeldung(socket, "Error: "+e);
     });
   });
-  externalRequest.delete('{"genreID": '+data+' }');
   externalRequest.end();
-} **/
+}
 
 function postSong(socket, data) {
   var options = {
