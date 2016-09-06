@@ -166,10 +166,10 @@ router.delete('/', function(req, res){
     async.series([
       function(callback){
         db.keys('allowedGenres:*', function(err, keys){
-          if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.') && callback();
+          if(err) return callback();
           else{
             db.mget(keys, function(err, genres){
-              if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+              if(err) return callback();
               else{
                 async.each(genres, function(genre, callback){
                   aGenres.push(JSON.parse(genre));
@@ -183,10 +183,10 @@ router.delete('/', function(req, res){
       },
     function(callback){
       db.keys('song:*', function(err,keys){
-        if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.') && callback();
+        if(err)return callback();
         else{
           db.mget(keys, function(err, songs){
-            if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+            if(err)return callback();
             else{
               async.each(songs, function(song, callback){
                 async.each(aGenres, function(genreAllowed, callback){
