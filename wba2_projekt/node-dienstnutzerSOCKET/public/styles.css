@@ -211,3 +211,11 @@ html, body {
   background-color: #9A7AD9; !important
   cursor: pointer;
 }
+
+.display {
+  display: block;
+}
+
+.display-none {
+  display: none;
+}

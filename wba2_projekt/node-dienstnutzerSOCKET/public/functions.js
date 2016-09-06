@@ -263,6 +263,17 @@
         socket.emit("deleteFirstQueueItem");
       }
 
+      function login() {
+        var value = document.getElementById('access').value
+        socket.emit("getPassword");
+        socket.on('resPassword', function(data){
+          if (data.pass === value) {
+            document.getElementById('admin-panel').classList.remove("display-none");
+            document.getElementById('login-panel').classList.add("display-none");
+          }
+        });
+      }
+
       function saveConfig() {
         var genreID =[];
         var checkboxes = document.getElementsByName('options-genre2');

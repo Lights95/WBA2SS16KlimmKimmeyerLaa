@@ -45,6 +45,10 @@ io.on('connection', function(socket){
     sendAllowedGenres(socket);
   });
 
+  socket.on('getPassword', function(){
+    sendPassword(socket);
+  });
+
   /*Verarbeite Daten*/
   socket.on('postQueue', function(data){
     postQueue(socket, data);
@@ -86,6 +90,28 @@ io.on('connection', function(socket){
 httpServer.listen(port);
 
 /*API Functions*/
+function sendPassword(socket) {
+  var options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/password',
+      method: 'GET',
+      headers: {
+        accept: 'application/json'
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    externalResponse.on('data', function(chunk){
+      var pwdata = JSON.parse(chunk);
+      socket.emit("resPassword",pwdata);
+    });
+  });
+  externalRequest.end();
+}
+
+
 function sendQueue(socket) {
   var options = {
       host: 'localhost',
