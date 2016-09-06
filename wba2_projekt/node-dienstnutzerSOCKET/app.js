@@ -172,7 +172,29 @@ function sendSongs(socket) {
     if (externalResponse.statusCode === 200) {
       externalResponse.on('data', function(chunk){
         var songdata = JSON.parse(chunk);
-        socket.emit("resSongs",songdata);
+        socket.emit("resFilteredSongs",songdata);
+      });
+    }
+  });
+  externalRequest.end();
+
+  //Filtered Songs
+  options = {
+      host: 'localhost',
+      port: 3000,
+      path: '/api/songs/validSongs',
+      method: 'GET',
+      headers: {
+        accept: 'application/json'
+      }
+  };
+
+  var externalRequest = http.request(options, function(externalResponse){
+    console.log('Verbindung mit Webservice hergestellt!');
+    if (externalResponse.statusCode === 200) {
+      externalResponse.on('data', function(chunk){
+        var songdata = JSON.parse(chunk);
+        socket.emit("resFilteredSongs",songdata);
       });
     }
   });

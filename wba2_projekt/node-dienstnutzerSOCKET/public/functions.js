@@ -20,6 +20,11 @@
         displaySongs(data);
       });
 
+      socket.on('resFilteredSongs', function(data){
+        document.getElementById("songsInDB").innerHTML = data.length;
+        displaySongsFiltered(data);
+      });
+
       socket.on('resGenres', function(data){
         displayGenres(data);
       });
@@ -79,13 +84,41 @@
         }
       }
 
-      function displaySongs(data) {
+      function displaySongsFiltered(data) {
         if (data.length === 0) {
           document.getElementById("songs").innerHTML = '<section class="section--center" style="text-align: center;"><p>Zur Zeit keine Songs in der Warteliste!</p></section>';
-          document.getElementById("admin-song-list").innerHTML = '<p>Zur Zeit keine Songs in der Warteliste!</p>';
         }
         else {
           document.getElementById("songs").innerHTML = "";
+          for (var i = 0; i < data.length; i++) {
+            var newSonglistObject = document.createElement("section");
+            newSonglistObject.className = "section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp";
+            newSonglistObject.innerHTML =
+            '<header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">' +
+              '<i class="material-icons">play_circle_filled</i>'+
+            '</header>'+
+            '<div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">'+
+              '<div class="mdl-card__supporting-text">'+
+                '<h4>#'+(i+1)+' '+data[i].title+'</h4>'+
+                'Interpret: '+data[i].artist+ ' <br>Genre: '+data[i].genre+
+              '</div>'+
+              '<div class="mdl-card__actions">'+
+                '<a href="#" class="mdl-button" onclick="addToQueue('+data[i].id+');">Zur Warteliste hinzufügen</a>'+
+              '</div>'+
+            '</div>';
+
+            document.getElementById("songs").appendChild(newSonglistObject);
+          }
+        }
+      }
+
+      function displaySongs(data) {
+        if (data.length === 0) {
+          //document.getElementById("songs").innerHTML = '<section class="section--center" style="text-align: center;"><p>Zur Zeit keine Songs in der Warteliste!</p></section>';
+          document.getElementById("admin-song-list").innerHTML = '<p>Zur Zeit keine Songs in der Warteliste!</p>';
+        }
+        else {
+          //document.getElementById("songs").innerHTML = "";
           document.getElementById("admin-song-list").innerHTML = "";
           for (var i = 0; i < data.length; i++) {
             var newSonglistObject = document.createElement("section");
@@ -111,7 +144,7 @@
             '<input type="radio" id="admin-delete-song'+data[i].id+'" class="mdl-radio__button" name="options-song" value="'+data[i].id+'">'+
             '<span class="mdl-radio__label">'+ data[i].title +"-<i>"+ data[i].artist+ "//"+ data[i].genre+ "</i><br></span>";
 
-            document.getElementById("songs").appendChild(newSonglistObject);
+            //document.getElementById("songs").appendChild(newSonglistObject);
             document.getElementById("admin-song-list").appendChild(newAdminSonglistObject);
           }
         }
