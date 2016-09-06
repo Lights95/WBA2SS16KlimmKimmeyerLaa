@@ -94,22 +94,24 @@ router.post('/', function(req, res){
 //Alle Songs ausgeben
 router.get('/', function(req, res){
   if(req.query.genre){
-    console.log(req.query.genre);
+    
   }
-  db.keys('song:*', function(err,keys){
-      if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
-      else{
+  else{
+    db.keys('song:*', function(err,keys){
+        if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
+        else{
           db.mget(keys, function(err, songs){
-              if(err)res.status(404).type('plain').send('Error beim Auslesen.');
-              else{
-                  songs=songs.map(function(song){
-                      return JSON.parse(song);
-                  });
-                  res.status(200).json(songs);
-              }
+            if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+            else{
+              songs=songs.map(function(song){
+                return JSON.parse(song);
+              });
+            res.status(200).json(songs);
+            }
           });
-      }
-  });
+        }
+    });
+  }
 
 
 });
