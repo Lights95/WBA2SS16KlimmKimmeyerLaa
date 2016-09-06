@@ -91,6 +91,51 @@ router.post('/', function(req, res){
     });
 });
 
+router.get('/validSongs', function(req,res){
+  var songsSorted =[];
+  var genres = [];
+  async.series([
+  function(callback){
+  db.keys('allowedGenres:*', function(err, keys){
+    if(err) return res.status(404).type('plain').send('Error beim Auslesen.') && callback();
+    db.mget(keys, function(err, genres2){
+      if(genres2===undefined) genres2=[];
+      else{
+        async.each(genres2, function(genre, callback){
+          console.log(genre);
+          genres.push(genre);
+          callback();
+        });
+        callback();
+      };
+    });
+  });
+},
+    function(err){
+      db.keys('song:*', function(err,keys){
+      if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
+      else{
+        db.mget(keys, function(err, songs){
+          if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+          else{
+            async.each(songs, function(song, callback){
+              async.each(genres, function(genreAllowed, callback){
+                if((JSON.parse(song)).genre === JSON.parse(genreAllowed).name){
+                  songsSorted.push(JSON.parse(song));
+                  callback();
+                }
+                else return callback();
+              });
+              callback();
+            });
+            res.status(200).json(songsSorted);
+          }
+        });
+      }
+  });
+  }]);
+});
+
 //Alle Songs ausgeben
 router.get('/', function(req, res){
   if(req.query.genre){
