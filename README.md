@@ -25,15 +25,15 @@ Niklas möchte gerne ein System haben, mit Hilfe dessen er sich und seinen Gäst
 ##Starten der Webanwendung, des Servers und des Clients
 Vorrausgesetzt wird, das node.js, Redis und entsprechende Module installiert sind(Namen der Module in "package.json").
   
-1.) */wba2_projekt/node-app/* :  
-redis-server starten, bitte im node-app Ordner
-2.) */wba2_projekt/node-app/* :  
-node app.js starten  
-3.) */wba2_projekt/node-dienstnutzerSOCKET/* :  
-node app.js starten  
-4.) *Browser* :  
-http://localhost:8080/ aufrufen
-5.) *Browser* :
-Standard-Passwort für den Adminpanel eingeben: "HALLOHA"
-6.) *Browser*:
-Datenbank füllen und Funktionen testen
+1.) */wba2_projekt/node-app/* :    
+redis-server starten, bitte im node-app Ordner  
+2.) */wba2_projekt/node-app/* :    
+node app.js starten    
+3.) */wba2_projekt/node-dienstnutzerSOCKET/* :    
+node app.js starten    
+4.) *Browser* :    
+http://localhost:8080/ aufrufen  
+5.) *Browser* :  
+Standard-Passwort für den Adminpanel eingeben: "HALLOHA" - eventuell zweimal probieren - nicht gefundener Bug  
+6.) *Browser*:  
+Datenbank füllen und Funktionen testen  
