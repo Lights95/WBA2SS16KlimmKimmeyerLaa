@@ -150,8 +150,7 @@ router.delete('/', function(req, res){
         db.lpop('queue' ,function (err, rep) {
           db.llen('queue', function(err,rep){
             if(rep===0){
-              randomSongAdden();
-              res.status(201).send('Added new Song successful!');
+              res.status(201).json(randomSongAdden());
             }else
               res.status(204).send('Song aus der Warteschlange erfolgreich gelöscht.');
           });
@@ -160,7 +159,7 @@ router.delete('/', function(req, res){
   });
 });
 
-  function randomSongAdden(){
+  function randomSongAdden(err,res){
     var aGenres=[];
     var songsSorted = [];
     var queueEntry={};
@@ -183,7 +182,6 @@ router.delete('/', function(req, res){
         });
       },
     function(callback){
-      console.log(aGenres);
       db.keys('song:*', function(err,keys){
         if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.') && callback();
         else{
@@ -192,7 +190,6 @@ router.delete('/', function(req, res){
             else{
               async.each(songs, function(song, callback){
                 async.each(aGenres, function(genreAllowed, callback){
-                  console.log(genreAllowed.name + "HAHA");
                   if((JSON.parse(song)).genre === genreAllowed.name|| aGenres.length===0){
                     songsSorted.push(JSON.parse(song));
                     callback();
@@ -210,10 +207,7 @@ router.delete('/', function(req, res){
     },
       //Holt das Songobjekt als komplettes Objekt heran, bis auf die Songid und speichert dies in Songentry
     function(callback){
-      console.log(songsSorted);
-      console.log(Math.floor(Math.random() * songsSorted.length) + "Random Key to happiness");
       var rand = songsSorted[Math.floor(Math.random() * songsSorted.length)];
-      console.log(rand);
       db.get('song:' + rand.id, function(err, ren){
         queueEntry.title  = JSON.parse(ren).title;
         queueEntry.artist = JSON.parse(ren).artist;
@@ -223,17 +217,20 @@ router.delete('/', function(req, res){
       });
     },
       //Aufgrund der Callbackhölle, ist das ganze sehr verschachtelt aufgebaut worden - Ab hier wird überprüft, ob das Genre des Songs erlaubt ist
-    function(err){
+    function(callback){
       db.incr('queueNumber',function(err, id){
-        queueEntry.queueNumber = id;
+        queueEntry.queueNumber = 1;
           /*Erstellt neuen Warteschlangeneintrag in der Datenbank*/
           db.rpush('queue', JSON.stringify(queueEntry), function(err, newOrder){
             /*neuer Song in der Warteschlange wird als JSON-Objekt zurückgegeben*/
-            return console.log("Success");
+            callback();
           });
         });
-      }
-  ]);
+      },
+      function(err){
+        console.log(queueEntry);
+        return queueEntry;
+      }]);
 };
 
 

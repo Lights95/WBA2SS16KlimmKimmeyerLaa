@@ -65,13 +65,10 @@ router.post('/', function(req, res){
             async.each(artists, function(artist, callback){
                 if(artist.name === req.body.name) {
                     gesetzt=true;
-                    console.log("should be 1");
                     callback();
                 }else{
-                  console.log("can be 1");
                 return callback();}
             });
-            console.log("should be 2");
             callback();
         });
     });
@@ -86,7 +83,6 @@ router.post('/', function(req, res){
     1.) ID wird automatisch generiert und bei jedem Eintrag inkrementiert
     2.) Datenbankeintrag wird erstellt */
     db.incr('artistIDs', function(err, id){
-      console.log(artist);
       artist.id=id;
       db.set('artist:' + artist.id, JSON.stringify(artist), function(err, newArtist){
         /*neuer Artist wird als JSON Objekt zurückgegeben*/

@@ -99,10 +99,9 @@ router.get('/validSongs', function(req,res){
   db.keys('allowedGenres:*', function(err, keys){
     if(err) return res.status(404).type('plain').send('Error beim Auslesen.') && callback();
     db.mget(keys, function(err, genres2){
-      if(genres2===undefined) genres2=[];
+      if(genres2===undefined) return genres2=[] && callback();
       else{
         async.each(genres2, function(genre, callback){
-          console.log(genre);
           genres.push(genre);
           callback();
         });
@@ -112,6 +111,23 @@ router.get('/validSongs', function(req,res){
   });
 },
     function(err){
+      if(genres.length===0){
+        db.keys('song:*', function(err,keys){
+            if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
+            else{
+              db.mget(keys, function(err, songs){
+                if(err)res.status(404).type('plain').send('Error beim Auslesen.');
+                else{
+                  songs=songs.map(function(song){
+                    return JSON.parse(song);
+                  });
+                res.status(200).json(songs);
+                }
+              });
+            }
+        });
+      }
+      else{
       db.keys('song:*', function(err,keys){
       if(err)res.status(404).type('plain').send('Error beim Auslesen oder Datenbank leer.');
       else{
@@ -133,6 +149,7 @@ router.get('/validSongs', function(req,res){
         });
       }
   });
+  }
   }]);
 });
 
@@ -144,7 +161,6 @@ router.get('/', function(req, res){
     genres.forEach(function(genre){
       genres[genres.indexOf(genre)]=genre.replace("_"," ");
     });
-    console.log(genres);
     var songsSorted =[];
 
     db.keys('song:*', function(err,keys){
@@ -208,7 +224,6 @@ router.put('/:id', function(req,res){
 router.get('/:id', function(req, res){
    db.get('song:'+req.params.id, function(err,rep){
        if(rep){
-           console.log(rep);
            res.status(200).type('json').send(rep);
        }
        else{
