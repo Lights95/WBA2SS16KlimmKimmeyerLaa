@@ -96,6 +96,10 @@ router.get('/', function(req, res){
   if(req.query.genre){
     var genres = [];
     genres = req.query.genre.split(',');
+    genres.forEach(function(genre){
+      genres[genres.indexOf(genre)]=genre.replace("_"," ");
+    });
+    console.log(genres);
     var songsSorted =[];
 
     db.keys('song:*', function(err,keys){
