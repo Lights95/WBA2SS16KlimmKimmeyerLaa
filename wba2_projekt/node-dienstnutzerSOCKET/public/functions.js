@@ -38,7 +38,6 @@
       });
 
       function displayAllowedGenres(data){
-        console.log(data.length);
         if(data.length === 0){
           document.getElementById("allowedGenres").innerHTML = " ";
           document.getElementById("allowedGenres").innerHTML = "Alle";
@@ -238,6 +237,22 @@
         data.genreID = genreID;
 
         socket.emit("postSong", data);
+      }
+
+      function deleteSong() {
+        var songID;
+        var radios = document.getElementsByName('options-song');
+        for (var i = 0, length = radios.length; i < length; i++) {
+            if (radios[i].checked) {
+                // do whatever you want with the checked radio
+                songID = radios[i].value;
+
+                // only one radio can be logically checked, don't check the rest
+                break;
+            }
+        }
+        
+        socket.emit("deleteSong", songID);
       }
 
       function saveConfig() {
