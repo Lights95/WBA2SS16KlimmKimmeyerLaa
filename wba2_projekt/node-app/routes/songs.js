@@ -91,6 +91,7 @@ router.post('/', function(req, res){
     });
 });
 
+//Gibt alle Songs zurück, welche zu den erlaubten Genres passen, falls alle erlaubt sind, werden alle zurückgegeben
 router.get('/validSongs', function(req,res){
   var songsSorted =[];
   var genres = [];
@@ -205,7 +206,7 @@ router.get('/', function(req, res){
 
 });
 
-//Song bearbeiten- Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
+/*Song bearbeiten- Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
 router.put('/:id', function(req,res){
     var id= req.params.id;
     db.exists('song:'+id,function(err,rep){
@@ -231,6 +232,7 @@ router.get('/:id', function(req, res){
        }
    });
 });
+*/
 
 //Song löschen
 router.delete('/:id', function(req, res){
@@ -244,4 +246,5 @@ router.delete('/:id', function(req, res){
         }
     });
 });
+
 module.exports = router;

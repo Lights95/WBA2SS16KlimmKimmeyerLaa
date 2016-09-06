@@ -31,7 +31,7 @@ router.post('/', function(req, res){
   if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
   var gesetzt= false;
 
-  /*Filtert alle Genres*/
+  /*Filtert alle Genres - führt Funktionen nacheinander aus, nach Erhalt des Callbacks wird fortgesetzt */
   async.series([
     function(callback){
       db.keys('genre:*', function(err, keys){
@@ -45,7 +45,7 @@ router.post('/', function(req, res){
           genres=genres.map(function(genre){
             return JSON.parse(genre);
           });
-          
+
           /*Überprüft, ob der neue Nutzername vorhanden ist*/
           async.each(genres, function(genre, callback){
             if(genre.name === req.body.name) {
@@ -91,7 +91,7 @@ router.get('/', function(req, res){
   });
 });
 
-//Einzelnes Genre bearbeiten
+/*Einzelnes Genre bearbeiten
 router.put('/:id', function(req,res){
     var id= req.params.id;
     db.exists('genre:'+id,function(err,rep){
@@ -106,7 +106,7 @@ router.put('/:id', function(req,res){
     });
 });
 
-/*Bestimmtes Genre ausgeben*/
+/*Bestimmtes Genre ausgeben
 router.get('/:id', function(req, res){
    db.get('genre:'+req.params.id, function(err,rep){
        if(rep){
@@ -131,6 +131,6 @@ router.delete('/:id', function(req, res){
     });
 });
 
-//Query- Requests fehlen noch
+*/
 
 module.exports = router;

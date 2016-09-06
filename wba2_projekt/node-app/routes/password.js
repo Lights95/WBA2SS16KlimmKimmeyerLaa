@@ -19,6 +19,8 @@ var passwordSchema={
 //Validierungsvariable
 var validate = ajv.compile(passwordSchema);
 
+/*Passwort wird über put neu erstellt und überschrieben. Passwort wird nur unter einem Key gespeichert - also gibt es nur ein PW*/
+
 router.put('/', function(req, res){
   var valid = validate(req.body);
   if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
@@ -34,6 +36,7 @@ router.get('/', function(req, res){
       if(rep){
           res.status(200).type('json').send(rep);
       }
+      //Falls ein Fehler mit dem Passwort vorliegt, wird aufs Standardpasswort zurückgesetzt
       else{
         var pass={"pass":"HALLOHA"};
         db.set('password:' + "admin" , JSON.stringify(pass), function(err,rep){

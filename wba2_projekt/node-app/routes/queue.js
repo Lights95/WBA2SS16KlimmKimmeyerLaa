@@ -46,11 +46,14 @@ router.post('/', function testItNow(req, res){
 
   if(!valid) return res.status(406).json({message: "Ungültiges Schema!"});
 
+  //Series: Wartet bis die aktuelle Funktion abgeschlossen ist und callback empfangen wird, dann mit nächster Funktion fortsetzen
 
   async.series([
 
     //Holt das Songobjekt als komplettes Objekt heran, bis auf die Songid und speichert dies in Songentry
+    // Funktion 1
     function(callback){
+      //das Objekt was in die Queue soll
       db.get('song:' + req.body.id, function(err, ren){
         queueEntry.title  = JSON.parse(ren).title;
         queueEntry.artist = JSON.parse(ren).artist;
@@ -61,6 +64,7 @@ router.post('/', function testItNow(req, res){
       });
     },
     //Gibt die ersten 10 Einträge der queue zurück - Ab hier wird geguckt, ob der Song schon in der Queue ist
+    //Funktion 2
     function(callback){
       db.lrange('queue',0,10,function (err,songs){
         if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
@@ -71,6 +75,7 @@ router.post('/', function testItNow(req, res){
 
 
         /*Überprüft, ob der neue Song vorhanden ist*/
+        //erneute async funktionen, wartet bis ergebnis von foreach array da ist
         async.each(songs, function(song, callback){
           if(song.id === queueEntry.id) {
             inQueue=true;
@@ -82,7 +87,8 @@ router.post('/', function testItNow(req, res){
         //Bis hierhin wird geguckt, ob der Song schon in der Queue ist
       });
     },
-    //Aufgrund der Callbackhölle, ist das ganze sehr verschachtelt aufgebaut worden - Ab hier wird überprüft, ob das Genre des Songs erlaubt ist.
+    //Ab hier wird überprüft, ob das Genre des Songs erlaubt ist.
+    //FUnktion 3
     function(callback){
       db.keys('allowedGenres:*', function(err, keys){
         if(err) return res.status(404).type('plain').send('Error beim Auslesen.');
@@ -159,7 +165,8 @@ router.delete('/', function(req, res){
   });
 });
 
-  function randomSongAdden(err,res){
+//FUnktion, der einen zufälligen Song an Stelle 1 in der Queue speichert, welcher zu den erlaubten Genres passt
+  function randomSongAdden(){
     var aGenres=[];
     var songsSorted = [];
     var queueEntry={};
@@ -189,6 +196,7 @@ router.delete('/', function(req, res){
             if(err)return callback();
             else{
               async.each(songs, function(song, callback){
+                //Falls alle Genres erlaubt sind, werden alle Songs ins Array gepackt --> alles Songs erlaubt: kein Genre übergeben
                 if(aGenres.length===0){
                   songsSorted.push(JSON.parse(song));
                   callback();
@@ -302,10 +310,8 @@ router.get('/allowedGenres', function(req,res){
 });
 
 
-    //funktioniert nicht in Webanwendung, da vom Dienstnutzer nicht richtig reagiert wird --> 2.Projektphase
-
     /*Löscht ein erlaubtes Genre der Queue mit einer bestimmten ID, wenn dieses Genre nicht bereits nicht vorhanden ist.
-    wird nicht benötigt*/
+    wird nicht benötigt
 router.delete('/allowedGenres/:id' , function(req,res){
   var id = req.params.id;
   db.exists('genre:'+id, function(err,rep){
@@ -317,7 +323,6 @@ router.delete('/allowedGenres/:id' , function(req,res){
     }
   });
 });
-
-    //Zufällige Fortführung fehlt noch
+*/
 
     module.exports = router;

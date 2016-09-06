@@ -45,7 +45,7 @@ router.post('/', function(req, res){
     //Variable zur Überprüfung, ob der neue Artist vorhanden ist.
     var gesetzt= false;
 
-    /*Erstellt ein Array aus Keys für alle Artists aus der DB*/
+    /*Erstellt ein Array aus Keys für alle Artists aus der DB, durch async wird diese Funktion erst bis zum Ende ausgeführt*/
     async.series([
     function(callback){
     db.keys('artist:*', function(err, keys){
@@ -60,7 +60,7 @@ router.post('/', function(req, res){
             artists=artists.map(function(artist){
                 return JSON.parse(artist);
             });
-
+            /*async damit gewartet wird, bis alle artists überprüft wurden.
             /*Überprüft, ob der neue Artist vorhanden ist*/
             async.each(artists, function(artist, callback){
                 if(artist.name === req.body.name) {
@@ -72,7 +72,9 @@ router.post('/', function(req, res){
             callback();
         });
     });
-  }] ,function(err){
+  }]
+  //Wird ausgeführt, wenn die erste Funktion Callback empfangen hat.
+  ,function(err){
     //Abbruch, falls Artist vorhanden ist
     if(gesetzt){
       return res.status(406).json({message : "Artist bereits vorhanden."});
@@ -116,7 +118,10 @@ router.get('/', function(req, res){
     });
 });
 
-//Einzelnen Artist bearbeiten - Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
+/*Einzelnen Artist bearbeiten - Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
+
+ Funktion wird nicht benötigt
+
 router.put('/:id', function(req,res){
     var id= req.params.id;
     db.exists('artist:'+id,function(err,rep){
@@ -130,9 +135,10 @@ router.put('/:id', function(req,res){
         else res.status(404).type('plain').send('Der Artist mit der ID ' + req.params.id + ' ist nicht vorhanden.');
     });
 });
++/
 
 
-/*Bestimmten Artist ausgeben - Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet*/
+/*Bestimmten Artist ausgeben - Dieser Funktion wurde nicht viel Beachtung geschenkt, funktioniert evtl nur begrenzt, da momentan noch nicht verwendet
 router.get('/:id', function(req, res){
    db.get('artist:'+req.params.id, function(err,rep){
        if(rep){
@@ -143,8 +149,9 @@ router.get('/:id', function(req, res){
        }
    });
 });
+*/
 
-//Artist löschen
+/*Artist löschen
 router.delete('/:id', function(req, res){
     //Speichern der ID vom Request in der Variable id
     var id = req.params.id;
@@ -160,7 +167,7 @@ router.delete('/:id', function(req, res){
     });
 });
 
-
+*/
 
 
 module.exports = router;

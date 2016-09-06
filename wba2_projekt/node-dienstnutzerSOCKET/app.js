@@ -1,7 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
-var mm = require('musicmetadata');
 
 var fs = require('fs');
 var http = require('http');
